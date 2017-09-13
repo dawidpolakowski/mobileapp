@@ -3,9 +3,11 @@ using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using FluentAssertions;
 using FsCheck.Xunit;
+using Microsoft.Reactive.Testing;
 using NSubstitute;
 using Toggl.Foundation.Sync;
 using Toggl.Foundation.Tests.Sync.States;
+using Toggl.Multivac.Extensions;
 using Xunit;
 using static Toggl.Foundation.Sync.SyncState;
 
@@ -13,28 +15,66 @@ namespace Toggl.Foundation.Tests.Sync
 {
     public sealed class TheDeadlocks
     {
-        public sealed class TheSyncManager
+        public abstract class BaseDeadlockTests
         {
-            private ISyncManager syncManager;
-            private TransitionHandlerProvider transitions;
-            private IStateMachine stateMachine;
-            private ISyncStateQueue queue;
-            private IStateMachineOrchestrator orchestrator;
-            private StateMachineEntryPoints entryPoints;
+            protected ISyncManager SyncManager;
+            protected TransitionHandlerProvider Transitions;
+            protected IScheduler Scheduler;
+            protected IStateMachine StateMachine;
+            protected ISyncStateQueue Queue;
+            protected IStateMachineOrchestrator Orchestrator;
+            protected StateMachineEntryPoints EntryPoints;
 
-            public TheSyncManager()
+            public BaseDeadlockTests(IScheduler scheduler)
             {
-                reset();
+                Scheduler = scheduler;
+                Reset();
             }
 
-            public void reset()
+            protected void Reset()
             {
-                queue = new SyncStateQueue();
-                transitions = new TransitionHandlerProvider();
-                stateMachine = new StateMachine(transitions, Substitute.For<IScheduler>());
-                entryPoints = new StateMachineEntryPoints();
-                orchestrator = new StateMachineOrchestrator(stateMachine, entryPoints);
-                syncManager = new SyncManager(queue, orchestrator);
+                Queue = new SyncStateQueue();
+                Transitions = new TransitionHandlerProvider();
+                Scheduler = new TestScheduler();
+                StateMachine = new StateMachine(Transitions, Scheduler);
+                EntryPoints = new StateMachineEntryPoints();
+                Orchestrator = new StateMachineOrchestrator(StateMachine, EntryPoints);
+                SyncManager = new SyncManager(Queue, Orchestrator);
+            }
+
+            protected StateResult PreparePullTransitions(int n)
+                => PrepareTransitions(EntryPoints.StartPullSync, n);
+
+            protected StateResult PreparePushTransitions(int n)
+                => PrepareTransitions(EntryPoints.StartPushSync, n);
+
+            protected StateResult PrepareTransitions(StateResult entryPoint, int n)
+            {
+                var lastResult = entryPoint;
+                for (int i = 0; i < Math.Abs(n) + 1; i++)
+                {
+                    var nextResult = new StateResult();
+                    Func<IObservable<ITransition>> transition = () => Observable.Return(new Transition(nextResult));
+
+                    Transitions.ConfigureTransition(lastResult, transition);
+
+                    lastResult = nextResult;
+                }
+
+                return lastResult;
+            }
+
+            protected void PrepareFailingTransition(StateResult lastResult)
+            {
+                Func<IObservable<ITransition>> failingTransition = () => Observable.Throw<ITransition>(new TestException());
+                Transitions.ConfigureTransition(lastResult, failingTransition);
+            }
+        }
+
+        public sealed class TheSyncManager : BaseDeadlockTests
+        {
+            public TheSyncManager() : base(Substitute.For<IScheduler>())
+            {
             }
 
             [Fact]
@@ -56,9 +96,9 @@ namespace Toggl.Foundation.Tests.Sync
             [Property]
             public void DoNotGetStuckInADeadlockWhenThereAreSomeTransitionHandlersForFullSync(int n)
             {
-                reset();
-                preparePullTransitions(n);
-                preparePushTransitions(n);
+                Reset();
+                PreparePullTransitions(n);
+                PreparePushTransitions(n);
 
                 var firstStateOfSecondFullSync = getFirstStateOfSecondSyncAfterFull();
 
@@ -68,8 +108,8 @@ namespace Toggl.Foundation.Tests.Sync
             [Property]
             public void DoNotGetStuckInADeadlockWhenThereAreSomeTransitionHandlersForPushSync(int n)
             {
-                reset();
-                preparePushTransitions(n);
+                Reset();
+                PreparePushTransitions(n);
 
                 var firstStateOfSecondSync = getFirstStateOfSecondSyncAfterPush();
 
@@ -79,9 +119,9 @@ namespace Toggl.Foundation.Tests.Sync
             [Property]
             public void DoNotGetStuckInADeadlockWhenSomeTransitionFailsForFullSync(int n)
             {
-                reset();
-                var lastResult = preparePullTransitions(n);
-                prepareFailingTransition(lastResult);
+                Reset();
+                var lastResult = PreparePullTransitions(n);
+                PrepareFailingTransition(lastResult);
 
                 var firstStateOfSecondSync = getFirstStateOfSecondSyncAfterFull();
 
@@ -91,55 +131,43 @@ namespace Toggl.Foundation.Tests.Sync
             [Property]
             public void DoNotGetStuckInADeadlockWhenSomeTransitionFailsForPushSync(int n)
             {
-                reset();
-                var lastResult = preparePushTransitions(n);
-                prepareFailingTransition(lastResult);
+                Reset();
+                var lastResult = PreparePushTransitions(n);
+                PrepareFailingTransition(lastResult);
 
                 var firstStateOfSecondSync = getFirstStateOfSecondSyncAfterPush();
 
                 firstStateOfSecondSync.Should().NotBe(Sleep);
             }
 
-            private StateResult preparePullTransitions(int n)
-                => prepareTransitions(entryPoints.StartPullSync, n);
-
-            private StateResult preparePushTransitions(int n)
-                => prepareTransitions(entryPoints.StartPushSync, n);
-
-            private StateResult prepareTransitions(StateResult entryPoint, int n)
-            {
-                var lastResult = entryPoint;
-                for (int i = 0; i < Math.Abs(n) + 1; i++)
-                {
-                    var nextResult = new StateResult();
-                    Func<IObservable<ITransition>> transition = () => Observable.Return(new Transition(nextResult));
-
-                    transitions.ConfigureTransition(lastResult, transition);
-
-                    lastResult = nextResult;
-                }
-
-                return lastResult;
-            }
-
-            private void prepareFailingTransition(StateResult lastResult)
-            {
-                Func<IObservable<ITransition>> failingTransition = () => Observable.Throw<ITransition>(new TestException());
-                transitions.ConfigureTransition(lastResult, failingTransition);
-            }
-
             private SyncState getFirstStateOfSecondSyncAfterFull()
-                => getFirstStateOfSecondSync(syncManager.ForceFullSync);
+                => getFirstStateOfSecondSync(SyncManager.ForceFullSync);
 
             private SyncState getFirstStateOfSecondSyncAfterPush()
-                => getFirstStateOfSecondSync(syncManager.PushSync);
+                => getFirstStateOfSecondSync(SyncManager.PushSync);
 
             private SyncState getFirstStateOfSecondSync(Func<IObservable<SyncState>> sync)
             {
                 var stateObservable = sync();
-                stateObservable.SkipWhile(state => state != Sleep).Wait();
+                stateObservable.SkipWhile(state =>
+                {
+                    return state != Sleep;
+                }).Wait();
                 var secondSyncStateObservable = sync();
                 return secondSyncStateObservable.FirstAsync().Wait();
+            }
+        }
+
+
+
+            }
+
+            {
+            }
+
+
+
+            {
             }
         }
     }
