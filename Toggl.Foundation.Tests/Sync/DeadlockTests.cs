@@ -158,17 +158,81 @@ namespace Toggl.Foundation.Tests.Sync
             }
         }
 
-
-
-            }
-
+        public sealed class TheStateMachine : BaseDeadlockTests
+        {
+            public TheStateMachine() : base(new TestScheduler())
             {
             }
 
-
-
+            [Fact]
+            public void DoNotGetStuckInADeadlockWhenThereIsNoTransitionHandler()
             {
+                var someResult = new StateResult();
+                var differentResult = new StateResult();
+
+                var secondStart = startStateMachineAndPrepareSecondStart(someResult, differentResult);
+
+                secondStart.ShouldNotThrow<InvalidOperationException>();
             }
+
+            [Property]
+            public void DoNotGetStuckInADeadlockWhenThereAreSomeTransitionHandlers(int n)
+            {
+                Reset();
+                var someResult = new StateResult();
+                PrepareTransitions(someResult, n);
+
+                var secondStart = startStateMachineAndPrepareSecondStart(someResult, someResult);
+
+                secondStart.ShouldNotThrow<InvalidOperationException>();
+            }
+
+            [Property]
+            public void DoNotGetStuckInADeadlockWhenATransitionHandlerFails(int n)
+            {
+                Reset();
+                var someResult = new StateResult();
+                var lastResult = PrepareTransitions(someResult, n);
+                PrepareFailingTransition(lastResult);
+
+                var secondStart = startStateMachineAndPrepareSecondStart(someResult, someResult);
+
+                secondStart.ShouldNotThrow<InvalidOperationException>();
+            }
+
+            [Property]
+            public void DoNotGetStuckInADeadlockWhenSomeTransitionTimeOuts(int n)
+            {
+                Reset();
+                var someResult = new StateResult();
+                var lastResult = PrepareTransitions(someResult, n);
+                Transitions.ConfigureTransition(lastResult, () => Observable.Never<ITransition>());
+
+                var observable = stateMachineFinised();
+                StateMachine.Start(someResult.Transition());
+                ((TestScheduler)Scheduler).AdvanceBy(TimeSpan.FromSeconds(62).Ticks);
+                observable.Wait();
+                Action secondStart = () => StateMachine.Start(someResult.Transition());
+
+                secondStart.ShouldNotThrow<InvalidOperationException>();
+            }
+
+            private Action startStateMachineAndPrepareSecondStart(StateResult first, StateResult second)
+            {
+                var observable = stateMachineFinised();
+                StateMachine.Start(first.Transition());
+                observable.Wait();
+                return () => StateMachine.Start(second.Transition());
+            }
+
+            private IObservable<StateMachineEvent> stateMachineFinised()
+                => StateMachine.StateTransitions
+                    .ConnectedReplay()
+                    .SkipWhile(isNotFinished)
+                    .FirstAsync();
+
+            private bool isNotFinished(StateMachineEvent next)
+                => !(next is StateMachineDeadEnd || next is StateMachineError);
         }
     }
 }
