@@ -12,11 +12,11 @@ namespace Toggl.Foundation.Sync
         private readonly ISyncStateQueue queue;
         private readonly IStateMachineOrchestrator orchestrator;
 
-        private bool isRunningSync;
-
+        public bool IsRunningSync { get; private set; }
+        
         public SyncState State => orchestrator.State;
         public IObservable<SyncState> StateObservable => orchestrator.StateObservable;
-
+        
         public SyncManager(ISyncStateQueue queue, IStateMachineOrchestrator orchestrator)
         {
             Ensure.Argument.IsNotNull(queue, nameof(queue));
@@ -50,7 +50,7 @@ namespace Toggl.Foundation.Sync
         {
             lock (stateLock)
             {
-                isRunningSync = false;
+                IsRunningSync = false;
                 startSyncIfNeeded();
             }
         }
@@ -64,9 +64,9 @@ namespace Toggl.Foundation.Sync
 
         private void startSyncIfNeeded()
         {
-            if (isRunningSync) return;
+            if (IsRunningSync) return;
 
-            isRunningSync = queue.StartNextQueuedState(orchestrator) != Sleep;
+            IsRunningSync = queue.StartNextQueuedState(orchestrator) != Sleep;
         }
 
         private IObservable<SyncState> syncStatesUntilAndIncludingSleep()
