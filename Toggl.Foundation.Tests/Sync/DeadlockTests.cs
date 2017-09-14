@@ -80,17 +80,17 @@ namespace Toggl.Foundation.Tests.Sync
             [Fact]
             public void DoNotGetStuckInADeadlockWhenThereAreNoTransitionHandlersForFullSync()
             {
-                var firstStateOfSecondFullSync = getFirstStateOfSecondSyncAfterFull();
+                var isLocked = isLockedAfterFullSync();
 
-                firstStateOfSecondFullSync.Should().NotBe(Sleep);
+                isLocked.Should().BeFalse();
             }
 
             [Fact]
             public void DoNotGetStuckInADeadlockWhenThereAreNoTransitionHandlersForPushSync()
             {
-                var firstStateOfSecondFullSync = getFirstStateOfSecondSyncAfterFull();
+                var isLocked = isLockedAfterFullSync();
 
-                firstStateOfSecondFullSync.Should().NotBe(Sleep);
+                isLocked.Should().BeFalse();
             }
 
             [Property]
@@ -100,9 +100,9 @@ namespace Toggl.Foundation.Tests.Sync
                 PreparePullTransitions(n);
                 PreparePushTransitions(n);
 
-                var firstStateOfSecondFullSync = getFirstStateOfSecondSyncAfterFull();
+                var isLocked = isLockedAfterFullSync();
 
-                firstStateOfSecondFullSync.Should().NotBe(Sleep);
+                isLocked.Should().BeFalse();
             }
 
             [Property]
@@ -111,9 +111,9 @@ namespace Toggl.Foundation.Tests.Sync
                 Reset();
                 PreparePushTransitions(n);
 
-                var firstStateOfSecondSync = getFirstStateOfSecondSyncAfterPush();
+                var isLocked = isLockedAfterPushSync();
 
-                firstStateOfSecondSync.Should().NotBe(Sleep);
+                isLocked.Should().BeFalse();
             }
 
             [Property]
@@ -123,9 +123,9 @@ namespace Toggl.Foundation.Tests.Sync
                 var lastResult = PreparePullTransitions(n);
                 PrepareFailingTransition(lastResult);
 
-                var firstStateOfSecondSync = getFirstStateOfSecondSyncAfterFull();
+                var isLocked = isLockedAfterFullSync();
 
-                firstStateOfSecondSync.Should().NotBe(Sleep);
+                isLocked.Should().BeFalse();
             }
 
             [Property]
@@ -135,26 +135,22 @@ namespace Toggl.Foundation.Tests.Sync
                 var lastResult = PreparePushTransitions(n);
                 PrepareFailingTransition(lastResult);
 
-                var firstStateOfSecondSync = getFirstStateOfSecondSyncAfterPush();
+                var isLocked = isLockedAfterPushSync();
 
-                firstStateOfSecondSync.Should().NotBe(Sleep);
+                isLocked.Should().BeFalse();
             }
 
-            private SyncState getFirstStateOfSecondSyncAfterFull()
-                => getFirstStateOfSecondSync(SyncManager.ForceFullSync);
+            private bool isLockedAfterFullSync()
+                => isLockedAfterSync(SyncManager.ForceFullSync);
 
-            private SyncState getFirstStateOfSecondSyncAfterPush()
-                => getFirstStateOfSecondSync(SyncManager.PushSync);
+            private bool isLockedAfterPushSync()
+                => isLockedAfterSync(SyncManager.PushSync);
 
-            private SyncState getFirstStateOfSecondSync(Func<IObservable<SyncState>> sync)
+            private bool isLockedAfterSync(Func<IObservable<SyncState>> sync)
             {
                 var stateObservable = sync();
-                stateObservable.SkipWhile(state =>
-                {
-                    return state != Sleep;
-                }).Wait();
-                var secondSyncStateObservable = sync();
-                return secondSyncStateObservable.FirstAsync().Wait();
+                stateObservable.SkipWhile(state => state != Sleep).Wait();
+                return SyncManager.IsRunningSync;
             }
         }
 
