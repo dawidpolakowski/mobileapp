@@ -60,10 +60,10 @@ namespace Toggl.Ultrawave.Tests.Integration.BaseTests
             CallingEndpointWith(TogglApiWith(wrongApiTokenCredentials)).ShouldThrow<ApiException>();
         }
 
-        //[Fact, LogTestInfo]
-        //public void FailsWithoutCredentials()
-        //{
-        //    CallingEndpointWith(TogglApiWith(Credentials.None)).ShouldThrow<ApiException>();
-        //}
+        [Fact, LogTestInfo]
+        public void FailsWithoutCredentials()
+        {
+            CallingEndpointWith(TogglApiWith(Credentials.None)).ShouldThrow<ApiException>();
+        }
     }
 }
