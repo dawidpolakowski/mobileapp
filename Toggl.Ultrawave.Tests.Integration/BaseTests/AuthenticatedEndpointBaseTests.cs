@@ -33,14 +33,14 @@ namespace Toggl.Ultrawave.Tests.Integration.BaseTests
             CallingEndpointWith(TogglApiWith(apiTokenCredentials)).ShouldNotThrow();
         }
 
-        //[Fact, LogTestInfo]
-        //public void FailsForNonExistingUser()
-        //{
-        //    var email = $"non-existing-email-{Guid.NewGuid()}@ironicmocks.toggl.com".ToEmail();
-        //    var wrongCredentials = Credentials.WithPassword(email, "123456789");
+        [Fact, LogTestInfo]
+        public void FailsForNonExistingUser()
+        {
+            var email = $"non-existing-email-{Guid.NewGuid()}@ironicmocks.toggl.com".ToEmail();
+            var wrongCredentials = Credentials.WithPassword(email, "123456789");
 
-        //    CallingEndpointWith(TogglApiWith(wrongCredentials)).ShouldThrow<ApiException>();
-        //}
+            CallingEndpointWith(TogglApiWith(wrongCredentials)).ShouldThrow<ApiException>();
+        }
 
         //[Fact, LogTestInfo]
         //public async Task FailsWithWrongPassword()
