@@ -51,14 +51,14 @@ namespace Toggl.Ultrawave.Tests.Integration.BaseTests
             CallingEndpointWith(TogglApiWith(wrongCredentials)).ShouldThrow<ApiException>();
         }
 
-        //[Fact, LogTestInfo]
-        //public void FailsWithWrongApiToken()
-        //{
-        //    var wrongApiToken = Guid.NewGuid().ToString("N");
-        //    var wrongApiTokenCredentials = Credentials.WithApiToken(wrongApiToken);
+        [Fact, LogTestInfo]
+        public void FailsWithWrongApiToken()
+        {
+            var wrongApiToken = Guid.NewGuid().ToString("N");
+            var wrongApiTokenCredentials = Credentials.WithApiToken(wrongApiToken);
 
-        //    CallingEndpointWith(TogglApiWith(wrongApiTokenCredentials)).ShouldThrow<ApiException>();
-        //}
+            CallingEndpointWith(TogglApiWith(wrongApiTokenCredentials)).ShouldThrow<ApiException>();
+        }
 
         //[Fact, LogTestInfo]
         //public void FailsWithoutCredentials()
