@@ -24,14 +24,14 @@ namespace Toggl.Ultrawave.Tests.Integration.BaseTests
             CallingEndpointWith(TogglApiWith(credentials)).ShouldNotThrow();
         }
 
-        //[Fact, LogTestInfo]
-        //public async Task WorksWithApiToken()
-        //{
-        //    var (_, user) = await SetupTestUser();
-        //    var apiTokenCredentials = Credentials.WithApiToken(user.ApiToken);
+        [Fact, LogTestInfo]
+        public async Task WorksWithApiToken()
+        {
+            var (_, user) = await SetupTestUser();
+            var apiTokenCredentials = Credentials.WithApiToken(user.ApiToken);
 
-        //    CallingEndpointWith(TogglApiWith(apiTokenCredentials)).ShouldNotThrow();
-        //}
+            CallingEndpointWith(TogglApiWith(apiTokenCredentials)).ShouldNotThrow();
+        }
 
         //[Fact, LogTestInfo]
         //public void FailsForNonExistingUser()
