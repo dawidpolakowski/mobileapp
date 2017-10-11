@@ -73,95 +73,95 @@ namespace Toggl.Ultrawave.Tests.Integration
         //    }
         //}
 
-        public sealed class TheGetAllSinceMethod : AuthenticatedGetSinceEndpointBaseTests<ITask>
-        {
-            private IProject project;
-
-            protected override IObservable<List<ITask>> CallEndpointWith(ITogglApi togglApi, DateTimeOffset threshold)
-            {
-                var user = togglApi.User.Get().Wait();
-                WorkspaceHelper.SetSubscription(user, user.DefaultWorkspaceId, PricingPlans.StarterMonthly).Wait();
-                return togglApi.Tasks.GetAllSince(threshold);
-            }
-
-            protected override DateTimeOffset AtDateOf(ITask model)
-                => model.At;
-
-            protected override ITask MakeUniqueModel(ITogglApi api, IUser user)
-                => new Task
-                {
-                    Active = true,
-                    Name = Guid.NewGuid().ToString(),
-                    WorkspaceId = user.DefaultWorkspaceId,
-                    ProjectId = getProject(api, user.DefaultWorkspaceId).Id,
-                    At = DateTimeOffset.UtcNow
-                };
-
-            protected override IObservable<ITask> PostModelToApi(ITogglApi api, ITask model)
-            {
-                var user = api.User.Get().Wait();
-                WorkspaceHelper.SetSubscription(user, user.DefaultWorkspaceId, PricingPlans.StarterMonthly).Wait();
-                return api.Tasks.Create(model);
-            }
-
-            protected override Expression<Func<ITask, bool>> ModelWithSameAttributesAs(ITask model)
-                => p => isTheSameAs(model, p);
-
-            private IProject getProject(ITogglApi api, long workspaceId)
-                => project ?? (project = createProject(api, workspaceId).Wait());
-        }
-
-        //public sealed class TheCreateMethod : AuthenticatedPostEndpointBaseTests<ITask>
+        //public sealed class TheGetAllSinceMethod : AuthenticatedGetSinceEndpointBaseTests<ITask>
         //{
-        //    [Fact]
-        //    public async void CreatingTaskFailsInTheFreePlan()
-        //    {
-        //        var (togglApi, user) = await SetupTestUser();
-        //        var project = await createProject(togglApi, user.DefaultWorkspaceId);
+        //    private IProject project;
 
-        //        Action creatingTask = () => createTask(togglApi, project, user.Id).Wait();
-
-        //        creatingTask.ShouldThrow<ForbiddenException>();
-        //    }
-
-        //    [Theory]
-        //    [InlineData(PricingPlans.StarterMonthly)]
-        //    [InlineData(PricingPlans.StarterAnnual)]
-        //    [InlineData(PricingPlans.PremiumMonthly)]
-        //    [InlineData(PricingPlans.PremiumAnnual)]
-        //    [InlineData(PricingPlans.EnterpriseMonthly)]
-        //    [InlineData(PricingPlans.EnterpriseAnnual)]
-        //    public async void CreatingTaskWorksForAllPricingPlansOtherThanTheFreePlan(PricingPlans plan)
-        //    {
-        //        var (togglApi, user) = await SetupTestUser();
-        //        WorkspaceHelper.SetSubscription(user, user.DefaultWorkspaceId, plan).Wait();
-        //        var project = createProject(togglApi, user.DefaultWorkspaceId).Wait();
-
-        //        Action creatingTask = () => createTask(togglApi, project, user.Id).Wait();
-
-        //        creatingTask.ShouldNotThrow();
-        //    }
-
-        //    [Fact(DisplayName = "Once this starts failing remove the workaround in the TasksApi class")]
-        //    public async void WillStartFailingWhenBackendFixesApiIssue5422()
-        //    {
-        //        var (togglApi, user) = await SetupTestUser();
-        //        WorkspaceHelper.SetSubscription(user, user.DefaultWorkspaceId, PricingPlans.StarterMonthly).Wait();
-        //        var project = createProject(togglApi, user.DefaultWorkspaceId).Wait();
-
-        //        var task = createTask(togglApi, project, user.Id).Wait();
-
-        //        task.Should().NotBe(default(DateTimeOffset));
-        //    }
-
-        //    protected override IObservable<ITask> CallEndpointWith(ITogglApi togglApi)
+        //    protected override IObservable<List<ITask>> CallEndpointWith(ITogglApi togglApi, DateTimeOffset threshold)
         //    {
         //        var user = togglApi.User.Get().Wait();
         //        WorkspaceHelper.SetSubscription(user, user.DefaultWorkspaceId, PricingPlans.StarterMonthly).Wait();
-        //        var project = createProject(togglApi, user.DefaultWorkspaceId).Wait();
-        //        return createTask(togglApi, project, user.Id);
+        //        return togglApi.Tasks.GetAllSince(threshold);
         //    }
+
+        //    protected override DateTimeOffset AtDateOf(ITask model)
+        //        => model.At;
+
+        //    protected override ITask MakeUniqueModel(ITogglApi api, IUser user)
+        //        => new Task
+        //        {
+        //            Active = true,
+        //            Name = Guid.NewGuid().ToString(),
+        //            WorkspaceId = user.DefaultWorkspaceId,
+        //            ProjectId = getProject(api, user.DefaultWorkspaceId).Id,
+        //            At = DateTimeOffset.UtcNow
+        //        };
+
+        //    protected override IObservable<ITask> PostModelToApi(ITogglApi api, ITask model)
+        //    {
+        //        var user = api.User.Get().Wait();
+        //        WorkspaceHelper.SetSubscription(user, user.DefaultWorkspaceId, PricingPlans.StarterMonthly).Wait();
+        //        return api.Tasks.Create(model);
+        //    }
+
+        //    protected override Expression<Func<ITask, bool>> ModelWithSameAttributesAs(ITask model)
+        //        => p => isTheSameAs(model, p);
+
+        //    private IProject getProject(ITogglApi api, long workspaceId)
+        //        => project ?? (project = createProject(api, workspaceId).Wait());
         //}
+
+        public sealed class TheCreateMethod : AuthenticatedPostEndpointBaseTests<ITask>
+        {
+            [Fact]
+            public async void CreatingTaskFailsInTheFreePlan()
+            {
+                var (togglApi, user) = await SetupTestUser();
+                var project = await createProject(togglApi, user.DefaultWorkspaceId);
+
+                Action creatingTask = () => createTask(togglApi, project, user.Id).Wait();
+
+                creatingTask.ShouldThrow<ForbiddenException>();
+            }
+
+            [Theory]
+            [InlineData(PricingPlans.StarterMonthly)]
+            [InlineData(PricingPlans.StarterAnnual)]
+            [InlineData(PricingPlans.PremiumMonthly)]
+            [InlineData(PricingPlans.PremiumAnnual)]
+            [InlineData(PricingPlans.EnterpriseMonthly)]
+            [InlineData(PricingPlans.EnterpriseAnnual)]
+            public async void CreatingTaskWorksForAllPricingPlansOtherThanTheFreePlan(PricingPlans plan)
+            {
+                var (togglApi, user) = await SetupTestUser();
+                WorkspaceHelper.SetSubscription(user, user.DefaultWorkspaceId, plan).Wait();
+                var project = createProject(togglApi, user.DefaultWorkspaceId).Wait();
+
+                Action creatingTask = () => createTask(togglApi, project, user.Id).Wait();
+
+                creatingTask.ShouldNotThrow();
+            }
+
+            [Fact(DisplayName = "Once this starts failing remove the workaround in the TasksApi class")]
+            public async void WillStartFailingWhenBackendFixesApiIssue5422()
+            {
+                var (togglApi, user) = await SetupTestUser();
+                WorkspaceHelper.SetSubscription(user, user.DefaultWorkspaceId, PricingPlans.StarterMonthly).Wait();
+                var project = createProject(togglApi, user.DefaultWorkspaceId).Wait();
+
+                var task = createTask(togglApi, project, user.Id).Wait();
+
+                task.Should().NotBe(default(DateTimeOffset));
+            }
+
+            protected override IObservable<ITask> CallEndpointWith(ITogglApi togglApi)
+            {
+                var user = togglApi.User.Get().Wait();
+                WorkspaceHelper.SetSubscription(user, user.DefaultWorkspaceId, PricingPlans.StarterMonthly).Wait();
+                var project = createProject(togglApi, user.DefaultWorkspaceId).Wait();
+                return createTask(togglApi, project, user.Id);
+            }
+        }
 
         private static ITask randomTask(IProject project, long userId, bool isActive = true)
             => new Task
