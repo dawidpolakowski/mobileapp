@@ -14,14 +14,14 @@ namespace Toggl.Ultrawave.Tests.Integration
 {
     public sealed class TasksApiTests
     {
-        public sealed class TheGetAllMethod : AuthenticatedEndpointBaseTests<List<ITask>>
-        {
-            protected override IObservable<List<ITask>> CallEndpointWith(ITogglApi togglApi)
-            {
-                var user = togglApi.User.Get().Wait();
-                WorkspaceHelper.SetSubscription(user, user.DefaultWorkspaceId, PricingPlans.StarterMonthly).Wait();
-                return togglApi.Tasks.GetAll();
-            }
+        //public sealed class TheGetAllMethod : AuthenticatedEndpointBaseTests<List<ITask>>
+        //{
+            //protected override IObservable<List<ITask>> CallEndpointWith(ITogglApi togglApi)
+            //{
+            //    var user = togglApi.User.Get().Wait();
+            //    WorkspaceHelper.SetSubscription(user, user.DefaultWorkspaceId, PricingPlans.StarterMonthly).Wait();
+            //    return togglApi.Tasks.GetAll();
+            //}
 
         //    [Fact, LogTestInfo]
         //    public async System.Threading.Tasks.Task ReturnsAllTasks()
