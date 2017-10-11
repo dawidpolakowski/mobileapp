@@ -73,43 +73,43 @@ namespace Toggl.Ultrawave.Tests.Integration
     //        }
     //    }
 
-    //    public sealed class TheGetAllSinceMethod : AuthenticatedGetSinceEndpointBaseTests<ITask>
-    //    {
-    //        private IProject project;
+        public sealed class TheGetAllSinceMethod : AuthenticatedGetSinceEndpointBaseTests<ITask>
+        {
+            private IProject project;
 
-    //        protected override IObservable<List<ITask>> CallEndpointWith(ITogglApi togglApi, DateTimeOffset threshold)
-    //        {
-    //            var user = togglApi.User.Get().Wait();
-    //            WorkspaceHelper.SetSubscription(user, user.DefaultWorkspaceId, PricingPlans.StarterMonthly).Wait();
-    //            return togglApi.Tasks.GetAllSince(threshold);
-    //        }
+            protected override IObservable<List<ITask>> CallEndpointWith(ITogglApi togglApi, DateTimeOffset threshold)
+            {
+                var user = togglApi.User.Get().Wait();
+                WorkspaceHelper.SetSubscription(user, user.DefaultWorkspaceId, PricingPlans.StarterMonthly).Wait();
+                return togglApi.Tasks.GetAllSince(threshold);
+            }
 
-    //        protected override DateTimeOffset AtDateOf(ITask model)
-    //            => model.At;
+            protected override DateTimeOffset AtDateOf(ITask model)
+                => model.At;
 
-    //        protected override ITask MakeUniqueModel(ITogglApi api, IUser user)
-    //            => new Task
-    //            {
-    //                Active = true,
-    //                Name = Guid.NewGuid().ToString(),
-    //                WorkspaceId = user.DefaultWorkspaceId,
-    //                ProjectId = getProject(api, user.DefaultWorkspaceId).Id,
-    //                At = DateTimeOffset.UtcNow
-    //            };
+            protected override ITask MakeUniqueModel(ITogglApi api, IUser user)
+                => new Task
+                {
+                    Active = true,
+                    Name = Guid.NewGuid().ToString(),
+                    WorkspaceId = user.DefaultWorkspaceId,
+                    ProjectId = getProject(api, user.DefaultWorkspaceId).Id,
+                    At = DateTimeOffset.UtcNow
+                };
 
-    //        protected override IObservable<ITask> PostModelToApi(ITogglApi api, ITask model)
-    //        {
-    //            var user = api.User.Get().Wait();
-    //            WorkspaceHelper.SetSubscription(user, user.DefaultWorkspaceId, PricingPlans.StarterMonthly).Wait();
-    //            return api.Tasks.Create(model);
-    //        }
+            protected override IObservable<ITask> PostModelToApi(ITogglApi api, ITask model)
+            {
+                var user = api.User.Get().Wait();
+                WorkspaceHelper.SetSubscription(user, user.DefaultWorkspaceId, PricingPlans.StarterMonthly).Wait();
+                return api.Tasks.Create(model);
+            }
 
-    //        protected override Expression<Func<ITask, bool>> ModelWithSameAttributesAs(ITask model)
-    //            => p => isTheSameAs(model, p);
+            protected override Expression<Func<ITask, bool>> ModelWithSameAttributesAs(ITask model)
+                => p => isTheSameAs(model, p);
 
-    //        private IProject getProject(ITogglApi api, long workspaceId)
-    //            => project ?? (project = createProject(api, workspaceId).Wait());
-    //    }
+            private IProject getProject(ITogglApi api, long workspaceId)
+                => project ?? (project = createProject(api, workspaceId).Wait());
+        }
 
     //    public sealed class TheCreateMethod : AuthenticatedPostEndpointBaseTests<ITask>
     //    {
