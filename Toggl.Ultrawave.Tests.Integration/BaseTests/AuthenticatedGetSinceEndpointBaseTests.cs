@@ -54,46 +54,46 @@ namespace Toggl.Ultrawave.Tests.Integration.BaseTests
             models.Should().Contain(ModelWithSameAttributesAs(secondModel));
         }
 
-        //[Fact, LogTestInfo]
-        //public async void ReturnsOnlyModelsWithAtDateNewerOrSameAsThreshold()
-        //{
-        //    var (api, user) = await SetupTestUser();
-        //    var (_, secondModel) = await SetUpModels(api, user);
+        [Fact, LogTestInfo]
+        public async void ReturnsOnlyModelsWithAtDateNewerOrSameAsThreshold()
+        {
+            var (api, user) = await SetupTestUser();
+            var (_, secondModel) = await SetUpModels(api, user);
 
-        //    var models = await CallEndpointWith(api, AtDateOf(secondModel));
+            var models = await CallEndpointWith(api, AtDateOf(secondModel));
 
-        //    models.Should().HaveCount(1);
-        //    models.Should().Contain(ModelWithSameAttributesAs(secondModel));
-        //}
+            models.Should().HaveCount(1);
+            models.Should().Contain(ModelWithSameAttributesAs(secondModel));
+        }
 
-        //[Fact, LogTestInfo]
-        //public async void ReturnsNoModelsIfThresholdIsAfterNewestAtDate()
-        //{
-        //    var (api, user) = await SetupTestUser();
-        //    var (_, secondModel) = await SetUpModels(api, user);
+        [Fact, LogTestInfo]
+        public async void ReturnsNoModelsIfThresholdIsAfterNewestAtDate()
+        {
+            var (api, user) = await SetupTestUser();
+            var (_, secondModel) = await SetUpModels(api, user);
 
-        //    var models = await CallEndpointWith(api, AtDateOf(secondModel).AddSeconds(1));
+            var models = await CallEndpointWith(api, AtDateOf(secondModel).AddSeconds(1));
 
-        //    models?.Should().HaveCount(0);
-        //}
+            models?.Should().HaveCount(0);
+        }
 
-        //[Fact, LogTestInfo]
-        //public async void SucceedsForThresholdAlmostThreeMonthsAgo()
-        //{
-        //    var (api, _) = await SetupTestUser();
+        [Fact, LogTestInfo]
+        public async void SucceedsForThresholdAlmostThreeMonthsAgo()
+        {
+            var (api, _) = await SetupTestUser();
 
-        //    await CallEndpointWith(api, DateTimeOffset.Now.AddDays(-85));
-        //}
+            await CallEndpointWith(api, DateTimeOffset.Now.AddDays(-85));
+        }
 
-        //[Fact, LogTestInfo]
-        //public async void FailsForThresholdMoreThanThreeMonthsAgo()
-        //{
-        //    var (api, _) = await SetupTestUser();
+        [Fact, LogTestInfo]
+        public async void FailsForThresholdMoreThanThreeMonthsAgo()
+        {
+            var (api, _) = await SetupTestUser();
 
-        //    Func<Task> callingEndpointWithBadThreshold = async () =>
-        //        await CallEndpointWith(api, DateTimeOffset.Now.AddDays(-95));
+            Func<Task> callingEndpointWithBadThreshold = async () =>
+                await CallEndpointWith(api, DateTimeOffset.Now.AddDays(-95));
 
-        //    callingEndpointWithBadThreshold.ShouldThrow<BadRequestException>();
-        //}
+            callingEndpointWithBadThreshold.ShouldThrow<BadRequestException>();
+        }
     }
 }
