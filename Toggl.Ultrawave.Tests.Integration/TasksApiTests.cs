@@ -14,64 +14,64 @@ namespace Toggl.Ultrawave.Tests.Integration
 {
     public sealed class TasksApiTests
     {
-        //public sealed class TheGetAllMethod : AuthenticatedEndpointBaseTests<List<ITask>>
-        //{
-            //protected override IObservable<List<ITask>> CallEndpointWith(ITogglApi togglApi)
-            //{
-            //    var user = togglApi.User.Get().Wait();
-            //    WorkspaceHelper.SetSubscription(user, user.DefaultWorkspaceId, PricingPlans.StarterMonthly).Wait();
-            //    return togglApi.Tasks.GetAll();
-            //}
+        public sealed class TheGetAllMethod : AuthenticatedEndpointBaseTests<List<ITask>>
+        {
+            protected override IObservable<List<ITask>> CallEndpointWith(ITogglApi togglApi)
+            {
+                var user = togglApi.User.Get().Wait();
+                WorkspaceHelper.SetSubscription(user, user.DefaultWorkspaceId, PricingPlans.StarterMonthly).Wait();
+                return togglApi.Tasks.GetAll();
+            }
 
-        //    [Fact, LogTestInfo]
-        //    public async System.Threading.Tasks.Task ReturnsAllTasks()
-        //    {
-        //        var (togglClient, user) = await SetupTestUser();
-        //        var project = await createProject(togglClient, user.DefaultWorkspaceId);
-        //        WorkspaceHelper.SetSubscription(user, user.DefaultWorkspaceId, PricingPlans.StarterMonthly).Wait();
-        //        var taskA = randomTask(project, user.Id);
-        //        await togglClient.Tasks.Create(taskA);
-        //        var taskB = randomTask(project, user.Id);
-        //        await togglClient.Tasks.Create(taskB);
+            [Fact, LogTestInfo]
+            public async System.Threading.Tasks.Task ReturnsAllTasks()
+            {
+                var (togglClient, user) = await SetupTestUser();
+                var project = await createProject(togglClient, user.DefaultWorkspaceId);
+                WorkspaceHelper.SetSubscription(user, user.DefaultWorkspaceId, PricingPlans.StarterMonthly).Wait();
+                var taskA = randomTask(project, user.Id);
+                await togglClient.Tasks.Create(taskA);
+                var taskB = randomTask(project, user.Id);
+                await togglClient.Tasks.Create(taskB);
 
-        //        var tasks = await togglClient.Tasks.GetAll();
+                var tasks = await togglClient.Tasks.GetAll();
 
-        //        tasks.Should().HaveCount(2);
-        //        tasks.Should().Contain(x => isTheSameAs(taskA, x));
-        //        tasks.Should().Contain(x => isTheSameAs(taskB, x));
-        //    }
+                tasks.Should().HaveCount(2);
+                tasks.Should().Contain(x => isTheSameAs(taskA, x));
+                tasks.Should().Contain(x => isTheSameAs(taskB, x));
+            }
 
-        //    [Fact, LogTestInfo]
-        //    public async System.Threading.Tasks.Task ReturnsOnlyActiveProjects()
-        //    {
-        //        var (togglClient, user) = await SetupTestUser();
-        //        var project = await createProject(togglClient, user.DefaultWorkspaceId);
-        //        WorkspaceHelper.SetSubscription(user, user.DefaultWorkspaceId, PricingPlans.StarterMonthly).Wait();
-        //        var task = randomTask(project, user.Id);
-        //        await togglClient.Tasks.Create(task);
-        //        var inactiveTask = randomTask(project, user.Id, isActive: false);
-        //        await togglClient.Tasks.Create(inactiveTask);
+            [Fact, LogTestInfo]
+            public async System.Threading.Tasks.Task ReturnsOnlyActiveProjects()
+            {
+                var (togglClient, user) = await SetupTestUser();
+                var project = await createProject(togglClient, user.DefaultWorkspaceId);
+                WorkspaceHelper.SetSubscription(user, user.DefaultWorkspaceId, PricingPlans.StarterMonthly).Wait();
+                var task = randomTask(project, user.Id);
+                await togglClient.Tasks.Create(task);
+                var inactiveTask = randomTask(project, user.Id, isActive: false);
+                await togglClient.Tasks.Create(inactiveTask);
 
-        //        var tasks = await togglClient.Tasks.GetAll();
+                var tasks = await togglClient.Tasks.GetAll();
 
-        //        tasks.Should().HaveCount(1);
-        //        tasks.Should().Contain(x => isTheSameAs(x, task));
-        //        tasks.Should().NotContain(x => isTheSameAs(x, inactiveTask));
-        //    }
+                tasks.Should().HaveCount(1);
+                tasks.Should().Contain(x => isTheSameAs(x, task));
+                tasks.Should().NotContain(x => isTheSameAs(x, inactiveTask));
+            }
 
-        //    [Fact, LogTestInfo]
-        //    public async System.Threading.Tasks.Task ReturnsEmptyListWhenThereAreNoActiveProjects()
-        //    {
-        //        var (togglClient, user) = await SetupTestUser();
-        //        var project = await createProject(togglClient, user.DefaultWorkspaceId);
-        //        WorkspaceHelper.SetSubscription(user, user.DefaultWorkspaceId, PricingPlans.StarterMonthly).Wait();
-        //        await togglClient.Tasks.Create(randomTask(project, user.Id, isActive: false));
+            [Fact, LogTestInfo]
+            public async System.Threading.Tasks.Task ReturnsEmptyListWhenThereAreNoActiveProjects()
+            {
+                var (togglClient, user) = await SetupTestUser();
+                var project = await createProject(togglClient, user.DefaultWorkspaceId);
+                WorkspaceHelper.SetSubscription(user, user.DefaultWorkspaceId, PricingPlans.StarterMonthly).Wait();
+                await togglClient.Tasks.Create(randomTask(project, user.Id, isActive: false));
 
-        //        var tasks = await togglClient.Tasks.GetAll();
+                var tasks = await togglClient.Tasks.GetAll();
 
-        //        tasks.Should().HaveCount(0);
-        //    }
-        //}
+                tasks.Should().HaveCount(0);
+            }
+        }
 
         //public sealed class TheGetAllSinceMethod : AuthenticatedGetSinceEndpointBaseTests<ITask>
         //{
