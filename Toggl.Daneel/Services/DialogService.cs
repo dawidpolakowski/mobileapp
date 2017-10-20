@@ -17,14 +17,22 @@ namespace Toggl.Daneel.Services
             var alert = UIAlertController.Create(title, message, UIAlertControllerStyle.Alert);
             alert.AddAction(UIAlertAction.Create(confirmButtonTitle, UIAlertActionStyle.Default, _ => confirmAction?.Invoke()));
             alert.AddAction(UIAlertAction.Create(dismissButtonTitle, UIAlertActionStyle.Cancel, _ => dismissAction?.Invoke()));
-            UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(alert, true, null);
+            getPresentationController().PresentViewController(alert, true, null);
         }
 
         public void ShowMessage(string title, string message, string dismissButtonTitle, Action dismissAction)
         {
             var alert = UIAlertController.Create(title, message, UIAlertControllerStyle.Alert);
             alert.AddAction(UIAlertAction.Create(dismissButtonTitle, UIAlertActionStyle.Cancel, _ => dismissAction?.Invoke()));
-            UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(alert, true, null);
+            getPresentationController().PresentViewController(alert, true, null);
+        }
+
+        private UIViewController getPresentationController()
+        {
+            var current = UIApplication.SharedApplication.KeyWindow.RootViewController;
+            while (current.PresentedViewController != null)
+                current = current.PresentedViewController;
+            return current;
         }
     }
 }
