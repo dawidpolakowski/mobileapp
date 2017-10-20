@@ -20,20 +20,21 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
         public abstract class SelectProjectViewModelTest : BaseViewModelTests<SelectProjectViewModel>
         {
             protected override SelectProjectViewModel CreateViewModel()
-                => new SelectProjectViewModel(DataSource, NavigationService);
+            => new SelectProjectViewModel(DataSource, NavigationService, DialogService);
         }
 
         public sealed class TheConstructor : SelectProjectViewModelTest
         {
             [Theory]
-            [ClassData(typeof(TwoParameterConstructorTestData))]
-            public void ThrowsIfAnyOfTheArgumentsIsNull(bool useDataSource, bool useNavigationService)
+            [ClassData(typeof(ThreeParameterConstructorTestData))]
+            public void ThrowsIfAnyOfTheArgumentsIsNull(bool useDataSource, bool useNavigationService, bool useDialogService)
             {
                 var dataSource = useDataSource ? DataSource : null;
                 var navigationService = useNavigationService ? NavigationService : null;
+                var dialogService = useDialogService ? DialogService : null;
 
                 Action tryingToConstructWithEmptyParameters =
-                    () => new SelectProjectViewModel(dataSource, navigationService);
+                    () => new SelectProjectViewModel(dataSource, navigationService, dialogService);
 
                 tryingToConstructWithEmptyParameters
                     .ShouldThrow<ArgumentNullException>();
@@ -54,7 +55,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
             [Property]
             public void ReturnsTheSameProjectIdThatWasPassedToTheViewModel(long? projectId)
             {
-                ViewModel.Prepare((projectId, 10));
+                ViewModel.Prepare((projectId, 10, 11));
 
                 ViewModel.CloseCommand.ExecuteAsync().Wait();
 
@@ -67,7 +68,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
             [Property]
             public void ReturnsTheSameTaskIdThatWasPassedToTheViewModel(long? taskId)
             {
-                ViewModel.Prepare((10, taskId));
+                ViewModel.Prepare((10, taskId, 11));
 
                 ViewModel.CloseCommand.ExecuteAsync().Wait();
 
@@ -83,7 +84,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
             [Fact]
             public async Task ClosesTheViewModel()
             {
-                await ViewModel.SelectProjectCommand.ExecuteAsync(ProjectSuggestion.NoProject);
+                ViewModel.SelectProjectCommand.Execute(ProjectSuggestion.NoProject);
 
                 await NavigationService.Received()
                     .Close(Arg.Is(ViewModel), Arg.Any<(long?, long?)>());
@@ -96,7 +97,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                 project.Id.Returns(13);
                 var selectedProject = new ProjectSuggestion(project);
 
-                await ViewModel.SelectProjectCommand.ExecuteAsync(selectedProject);
+                ViewModel.SelectProjectCommand.Execute(selectedProject);
 
                 await NavigationService.Received().Close(
                     Arg.Is(ViewModel),
@@ -111,7 +112,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                 project.Id.Returns(13);
                 var selectedProject = new ProjectSuggestion(project);
 
-                await ViewModel.SelectProjectCommand.ExecuteAsync(selectedProject);
+                ViewModel.SelectProjectCommand.Execute(selectedProject);
 
                 await NavigationService.Received().Close(
                     Arg.Is(ViewModel),
@@ -127,7 +128,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                 task.ProjectId.Returns(10);
                 var selectedTask = new TaskSuggestion(task);
 
-                await ViewModel.SelectProjectCommand.ExecuteAsync(selectedTask);
+                ViewModel.SelectProjectCommand.Execute(selectedTask);
 
                 await NavigationService.Received().Close(
                     Arg.Is(ViewModel),
@@ -143,7 +144,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                 task.ProjectId.Returns(10);
                 var selectedTask = new TaskSuggestion(task);
 
-                await ViewModel.SelectProjectCommand.ExecuteAsync(selectedTask);
+                ViewModel.SelectProjectCommand.Execute(selectedTask);
 
                 await NavigationService.Received().Close(
                     Arg.Is(ViewModel),
@@ -154,7 +155,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
             [Fact] 
             public async Task ReturnsNullIfNoProjectWasSelected()
             {
-                await ViewModel.SelectProjectCommand.ExecuteAsync(ProjectSuggestion.NoProject);
+                ViewModel.SelectProjectCommand.Execute(ProjectSuggestion.NoProject);
 
                 await NavigationService.Received().Close(
                     Arg.Is(ViewModel),

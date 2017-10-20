@@ -269,7 +269,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                     .Returns(Observable.Return(project));
                 ViewModel.Prepare(timeEntry.Id);
                 await ViewModel.Initialize();
-                NavigationService.Navigate<(long?, long?), (long?, long?)>(typeof(SelectProjectViewModel), Arg.Any<(long?, long?)>())
+                NavigationService.Navigate<(long?, long?, long), (long?, long?)>(typeof(SelectProjectViewModel), Arg.Any<(long?, long?, long)>())
                     .Returns((newProjectId, null));
                 await ViewModel.SelectProjectCommand.ExecuteAsync();
 
@@ -509,7 +509,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                 if (taskId.HasValue)
                     prepareTask(taskId.Value, taskName);
 
-                NavigationService.Navigate<(long?, long?), (long?, long?)>(typeof(SelectProjectViewModel), Arg.Any<(long?, long?)>())
+                NavigationService.Navigate<(long?, long?, long), (long?, long?)>(typeof(SelectProjectViewModel), Arg.Any<(long?, long?, long)>())
                     .Returns((projectId, taskId));
             }
 
