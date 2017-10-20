@@ -539,6 +539,7 @@
     <Compile Include="Views\Onboarding\SummaryPage.designer.cs">
       <DependentUpon>SummaryPage.cs</DependentUpon>
     </Compile>
+    <Compile Include="Services\DialogService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Toggl.Foundation.MvvmCross\Toggl.Foundation.MvvmCross.csproj">

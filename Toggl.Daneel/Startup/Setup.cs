@@ -67,6 +67,7 @@ namespace Toggl.Daneel
             var loginManager = new LoginManager(apiFactory, database, timeService, TaskPoolScheduler.Default);
 
             Mvx.RegisterSingleton<ITimeService>(timeService);
+            Mvx.RegisterSingleton<IDialogService>(new DialogService());
             Mvx.RegisterSingleton<ISuggestionProviderContainer>(
                 new SuggestionProviderContainer(
                     new MostUsedTimeEntrySuggestionProvider(database, timeService)
