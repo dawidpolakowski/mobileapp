@@ -4,7 +4,7 @@ using UIKit;
 
 namespace Toggl.Daneel.Services
 {
-    public class DialogService : IDialogService
+    public sealed class DialogService : IDialogService
     {
         public void Confirm(
             string title,
