@@ -238,5 +238,29 @@ namespace Toggl.Foundation {
                 return ResourceManager.GetString("SuggestionsEmptyStateText", resourceCulture);
             }
         }
+        
+        public static string DifferentWorkspaceAlertTitle {
+            get {
+                return ResourceManager.GetString("DifferentWorkspaceAlertTitle", resourceCulture);
+            }
+        }
+        
+        public static string DifferentWorkspaceAlertMessage {
+            get {
+                return ResourceManager.GetString("DifferentWorkspaceAlertMessage", resourceCulture);
+            }
+        }
+        
+        public static string Ok {
+            get {
+                return ResourceManager.GetString("Ok", resourceCulture);
+            }
+        }
+        
+        public static string Cancel {
+            get {
+                return ResourceManager.GetString("Cancel", resourceCulture);
+            }
+        }
     }
 }

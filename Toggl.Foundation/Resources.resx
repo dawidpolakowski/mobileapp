@@ -117,4 +117,16 @@ Please try again.</value>
 Start the timer and your most used
 time entries will appear here.</value>
     </data>
+    <data name="DifferentWorkspaceAlertTitle">
+        <value>You've selected a project from another workspace.</value>
+    </data>
+    <data name="DifferentWorkspaceAlertMessage">
+        <value>Change workspace?</value>
+    </data>
+    <data name="Ok">
+        <value>Ok</value>
+    </data>
+    <data name="Cancel">
+        <value>Cancel</value>
+    </data>
 </root>
