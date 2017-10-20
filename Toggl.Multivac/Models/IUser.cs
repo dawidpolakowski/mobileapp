@@ -22,27 +22,8 @@ namespace Toggl.Multivac.Models
 
         string Language { get; }
 
-        //TODO: Is this even needed
         string ImageUrl { get; }
 
-        //TODO: ?
-        bool SidebarPiechart { get; }
-
         DateTimeOffset At { get; }
-
-        //TODO: ?
-        int Retention { get; }
-
-        //TODO: ?
-        bool RecordTimeline { get; }
-
-        //TODO: ?
-        bool RenderTimeline { get; }
-
-        //TODO: ?
-        bool TimelineEnabled { get; }
-
-        //TODO: ?
-        bool TimelineExperiment { get; }
     }
 }
