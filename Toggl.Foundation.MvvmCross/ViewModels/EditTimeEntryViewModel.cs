@@ -213,8 +213,8 @@ namespace Toggl.Foundation.MvvmCross.ViewModels
         private async Task selectProject()
         {
             var selectedProjectIdAndTaskId = await navigationService
-                .Navigate<SelectProjectViewModel, (long?, long?), (long? projectId, long? taskId)>(
-                    (projectId, taskId));
+                .Navigate<SelectProjectViewModel, (long?, long?, long), (long? projectId, long? taskId)>(
+                    (projectId, taskId, workspaceId));
 
             if (selectedProjectIdAndTaskId.projectId == projectId
                 && selectedProjectIdAndTaskId.taskId == taskId)
@@ -226,11 +226,13 @@ namespace Toggl.Foundation.MvvmCross.ViewModels
             if (projectId == null)
             {
                 Project = Task = Client = ProjectColor = "";
+                clearTagsIfNeeded(workspaceId, initialWorkspaceId);
                 workspaceId = initialWorkspaceId;
                 return;
             }
 
             var project = await dataSource.Projects.GetById(projectId.Value);
+            clearTagsIfNeeded(workspaceId, project.WorkspaceId);
             Project = project.Name;
             Client = project.Client?.Name;
             ProjectColor = project.Color;
@@ -283,6 +285,16 @@ namespace Toggl.Foundation.MvvmCross.ViewModels
         private void toggleBillable() 
         {
             Billable = !Billable;
+        }
+
+        private void clearTagsIfNeeded(long currenctWorkspaceId, long newWorkspaceId)
+        {
+            if (currenctWorkspaceId == newWorkspaceId) return;
+
+            Tags.Clear();
+            tagIds.Clear();
+            RaisePropertyChanged(nameof(Tags));
+            RaisePropertyChanged(nameof(HasTags));
         }
     }
 }

@@ -18,7 +18,7 @@ namespace Toggl.Foundation.MvvmCross.ViewModels
 {
     [Preserve(AllMembers = true)]
     public sealed class SelectProjectViewModel
-        : MvxViewModel<(long? projectId, long? taskId), (long? projectId, long? taskId)>
+        : MvxViewModel<(long? projectId, long? taskId, long workspaceId), (long? projectId, long? taskId)>
     {
         private readonly ITogglDataSource dataSource;
         private readonly IMvxNavigationService navigationService;
@@ -55,19 +55,16 @@ namespace Toggl.Foundation.MvvmCross.ViewModels
             SelectProjectCommand = new MvxCommand<AutocompleteSuggestion>(selectProject);
         }
 
-        public override void Prepare((long? projectId, long? taskId) parameter)
+        public override void Prepare((long? projectId, long? taskId, long workspaceId) parameter)
         {
-            projectId = parameter.projectId;
             taskId = parameter.taskId;
+            projectId = parameter.projectId;
+            workspaceId = parameter.workspaceId;
         }
 
         public override async Task Initialize()
         {
             await base.Initialize();
-
-            workspaceId = projectId == null || projectId == 0
-                ? (await dataSource.User.Current()).DefaultWorkspaceId
-                : (await dataSource.Projects.GetById(projectId.Value)).WorkspaceId;
                                  
             infoSubject.AsObservable()
                        .StartWith(Text)
