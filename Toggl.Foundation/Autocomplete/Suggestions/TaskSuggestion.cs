@@ -19,6 +19,7 @@ namespace Toggl.Foundation.Autocomplete.Suggestions
             TaskId = task.Id;
             Name = task.Name;
             ProjectId = task.ProjectId;
+            WorkspaceId = task.WorkspaceId;
             ProjectName = task.Project?.Name ?? "";
             ProjectColor = task.Project?.Color ?? "";
         }

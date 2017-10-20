@@ -50,6 +50,7 @@ namespace Toggl.Foundation.Autocomplete.Suggestions
             ProjectColor = project.Color;
             NumberOfTasks = project.Tasks?.Count() ?? 0;
             ClientName = project.Client?.Name ?? "";
+            WorkspaceId = project.WorkspaceId;
             WorkspaceName = project.Workspace?.Name ?? "";
             Tasks = project.Tasks?.Select(task => new TaskSuggestion(task)).ToList() ?? new List<TaskSuggestion>();
         }
