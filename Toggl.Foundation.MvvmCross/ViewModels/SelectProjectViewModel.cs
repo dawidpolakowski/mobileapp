@@ -10,6 +10,7 @@ using Toggl.Foundation.Autocomplete.Suggestions;
 using Toggl.Foundation.DataSources;
 using Toggl.Foundation.MvvmCross.Collections;
 using Toggl.Foundation.MvvmCross.Helper;
+using Toggl.Foundation.MvvmCross.Services;
 using Toggl.Multivac;
 using Toggl.Multivac.Extensions;
 
@@ -21,7 +22,9 @@ namespace Toggl.Foundation.MvvmCross.ViewModels
     {
         private readonly ITogglDataSource dataSource;
         private readonly IMvxNavigationService navigationService;
+        private readonly IDialogService dialogService;
         private readonly Subject<string> infoSubject = new Subject<string>();
+        private long workspaceId;
         private long? projectId;
         private long? taskId;
 
@@ -31,22 +34,25 @@ namespace Toggl.Foundation.MvvmCross.ViewModels
 
         public IMvxAsyncCommand CloseCommand { get; }
 
-        public IMvxAsyncCommand<AutocompleteSuggestion> SelectProjectCommand { get; }
+        public IMvxCommand<AutocompleteSuggestion> SelectProjectCommand { get; }
 
         public MvxObservableCollection<WorkspaceGroupedCollection<AutocompleteSuggestion>> Suggestions { get; }
             = new MvxObservableCollection<WorkspaceGroupedCollection<AutocompleteSuggestion>>();
 
-        public SelectProjectViewModel(ITogglDataSource dataSource, IMvxNavigationService navigationService)
+        public SelectProjectViewModel(
+            ITogglDataSource dataSource, IMvxNavigationService navigationService, IDialogService dialogService)
         {
             Ensure.Argument.IsNotNull(dataSource, nameof(dataSource));
             Ensure.Argument.IsNotNull(navigationService, nameof(navigationService));
+            Ensure.Argument.IsNotNull(dialogService, nameof(dialogService));
 
             this.dataSource = dataSource;
             this.navigationService = navigationService;
+            this.dialogService = dialogService;
 
             CloseCommand = new MvxAsyncCommand(close);
             ToggleTaskSuggestionsCommand = new MvxCommand<ProjectSuggestion>(toggleTaskSuggestions);
-            SelectProjectCommand = new MvxAsyncCommand<AutocompleteSuggestion>(selectProject);
+            SelectProjectCommand = new MvxCommand<AutocompleteSuggestion>(selectProject);
         }
 
         public override void Prepare((long? projectId, long? taskId) parameter)
@@ -59,6 +65,10 @@ namespace Toggl.Foundation.MvvmCross.ViewModels
         {
             await base.Initialize();
 
+            workspaceId = projectId == null || projectId == 0
+                ? (await dataSource.User.Current()).DefaultWorkspaceId
+                : (await dataSource.Projects.GetById(projectId.Value)).WorkspaceId;
+                                 
             infoSubject.AsObservable()
                        .StartWith(Text)
                        .SelectMany(text => dataSource.AutocompleteProvider.Query(text, AutocompleteSuggestionType.Projects))
@@ -83,7 +93,25 @@ namespace Toggl.Foundation.MvvmCross.ViewModels
         private Task close()
             => navigationService.Close(this, (projectId, taskId));
 
-        private Task selectProject(AutocompleteSuggestion suggestion)
+        private void selectProject(AutocompleteSuggestion suggestion)
+        {
+            if (suggestion.WorkspaceId == workspaceId || suggestion.WorkspaceId == 0)
+            {
+                setProject(suggestion);
+                return;
+            }
+
+            dialogService.Confirm(
+                Resources.DifferentWorkspaceAlertTitle,
+                Resources.DifferentWorkspaceAlertMessage,
+                Resources.Ok,
+                Resources.Cancel,
+                () => setProject(suggestion),
+                null
+            );
+        }
+
+        private void setProject(AutocompleteSuggestion suggestion)
         {
             switch (suggestion)
             {
@@ -102,7 +130,7 @@ namespace Toggl.Foundation.MvvmCross.ViewModels
                     throw new ArgumentException($"{nameof(suggestion)} must be either of type {nameof(ProjectSuggestion)} or {nameof(TaskSuggestion)}.");
             }
 
-            return navigationService.Close(this, (projectId, taskId));
+            navigationService.Close(this, (projectId, taskId));
         }
 
         private void toggleTaskSuggestions(ProjectSuggestion projectSuggestion)
