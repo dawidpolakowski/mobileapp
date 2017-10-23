@@ -90,7 +90,7 @@ namespace Toggl.Ultrawave.Tests.Exceptions
                 var headers = new[] { new KeyValuePair<string, IEnumerable<string>>("abc", new[] { "a", "b", "c" }) };
                 var response = new Response(body, false, "application/json", headers, HttpStatusCode.InternalServerError);
                 var exception = new InternalServerErrorException(request, response, "Custom message.");
-                var expectedSerialization = $"ApiException for request {method} {endpoint}: Response: (Status: [500 InternalServerError]) (Headers: [abc: [a, b, c]]) (Body: {body}) (Message: Custom message.)";
+                var expectedSerialization = $"ApiException for request {method} {endpoint}: Response: (Status: [500 InternalServerError]) (Headers: ['abc': ['a', 'b', 'c']]) (Body: {body}) (Message: Custom message.)";
 
                 var serialized = exception.ToString();
 
@@ -101,7 +101,7 @@ namespace Toggl.Ultrawave.Tests.Exceptions
             public void SerializesOneHeaderKeyWithNoValues()
             {
                 var headers = new[] { new KeyValuePair<string, IEnumerable<string>>("abc", new string[0]) };
-                var expectedSerialization = "abc: []";
+                var expectedSerialization = "'abc': []";
 
                 var serialized = ApiException.SerializeHeaders(headers);
 
@@ -112,7 +112,7 @@ namespace Toggl.Ultrawave.Tests.Exceptions
             public void SerializesOneHeaderKeyWithOneValue()
             {
                 var headers = new[] { new KeyValuePair<string, IEnumerable<string>>("abc", new[] { "def" }) };
-                var expectedSerialization = "abc: [def]";
+                var expectedSerialization = "'abc': ['def']";
 
                 var serialized = ApiException.SerializeHeaders(headers);
 
@@ -123,7 +123,7 @@ namespace Toggl.Ultrawave.Tests.Exceptions
             public void SerializesOneHeaderKeyWithMultipleValues()
             {
                 var headers = new[] { new KeyValuePair<string, IEnumerable<string>>("abc", new[] { "def", "ghi", "jkl" }) };
-                var expectedSerialization = "abc: [def, ghi, jkl]";
+                var expectedSerialization = "'abc': ['def', 'ghi', 'jkl']";
 
                 var serialized = ApiException.SerializeHeaders(headers);
 
@@ -139,7 +139,7 @@ namespace Toggl.Ultrawave.Tests.Exceptions
                     new KeyValuePair<string, IEnumerable<string>>("xyz", new string[0]),
                     new KeyValuePair<string, IEnumerable<string>>("uvw", new[] { "123" })
                 };
-                var expectedSerialization = "abc: [def, ghi, jkl], xyz: [], uvw: [123]";
+                var expectedSerialization = "'abc': ['def', 'ghi', 'jkl'], 'xyz': [], 'uvw': ['123']";
 
                 var serialized = ApiException.SerializeHeaders(headers);
 

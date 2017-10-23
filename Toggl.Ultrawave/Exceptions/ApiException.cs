@@ -29,7 +29,7 @@ namespace Toggl.Ultrawave.Exceptions
                 + $"(Message: {message})";
 
         public static string SerializeHeaders(IEnumerable<KeyValuePair<string, IEnumerable<string>>> headers)
-            => String.Join(", ", headers.Select(pair => $"{pair.Key}: [{String.Join(", ", pair.Value.ToArray())}]").ToArray());
+            => String.Join(", ", headers.Select(pair => $"'{pair.Key}': [{String.Join(", ", pair.Value.Select(v => $"'{v}'").ToArray())}]").ToArray());
 
         public override string Message => ToString();
     }
