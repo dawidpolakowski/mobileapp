@@ -35,11 +35,12 @@ namespace Toggl.Ultrawave.Tests.Integration.Helper
 
         public static async Task SetSubscription(IUser user, long workspaceId, PricingPlans plan)
         {
-            BaseApi.ConsoleWriteLine = Console.WriteLine;
-            var json = $"{{\"pricing_plan_id\":{(int)plan}}}";
+            // BaseApi.ConsoleWriteLine = Console.WriteLine;
+            // var json = $"{{\"pricing_plan_id\":{(int)plan}}}";
 
-            var result = await makeRequest($"https://toggl.space/api/v9/workspaces/{workspaceId}/subscriptions", HttpMethod.Post, user, json);
-            Console.WriteLine($"WH3: got response: SetSubscription");
+            // var result = await makeRequest($"https://toggl.space/api/v9/workspaces/{workspaceId}/subscriptions", HttpMethod.Post, user, json);
+            // Console.WriteLine($"WH3: got response: SetSubscription");
+            await Task.Delay(1);
         }
 
         public static async Task<List<int>> GetAllAvailablePricingPlans(IUser user)
