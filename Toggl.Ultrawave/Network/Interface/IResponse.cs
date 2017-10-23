@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.Net;
 
 namespace Toggl.Ultrawave.Network
 {
@@ -11,5 +12,7 @@ namespace Toggl.Ultrawave.Network
         string ContentType { get; }
 
         HttpStatusCode StatusCode { get; }
+
+        IEnumerable<KeyValuePair<string, IEnumerable<string>>> Headers { get; }
     }
 }

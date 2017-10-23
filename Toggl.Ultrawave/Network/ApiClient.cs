@@ -1,4 +1,6 @@
-﻿using System.Net.Http;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Toggl.Multivac;
@@ -62,6 +64,7 @@ namespace Toggl.Ultrawave.Network
             var rawResponseString = "";
             var isSuccess = responseMessage.IsSuccessStatusCode;
             var contentType = responseMessage.Content?.Headers?.ContentType?.MediaType ?? defaultContentType;
+            var headers = responseMessage.Headers;
 
             using (var content = responseMessage.Content)
             {
@@ -71,7 +74,7 @@ namespace Toggl.Ultrawave.Network
                 }
             }
 
-            var response = new Response(rawResponseString, isSuccess, contentType, responseMessage.StatusCode);
+            var response = new Response(rawResponseString, isSuccess, contentType, headers, responseMessage.StatusCode);
             return response;
         }
     }
