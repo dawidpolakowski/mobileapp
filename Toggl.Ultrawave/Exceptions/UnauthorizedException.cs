@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Toggl.Ultrawave.Network;
 
 namespace Toggl.Ultrawave.Exceptions
 {
@@ -8,13 +9,13 @@ namespace Toggl.Ultrawave.Exceptions
 
         private const string defaultMessage = "User is not authorized to make this request and must enter login again.";
 
-        public UnauthorizedException()
-            : this(defaultMessage)
+        internal UnauthorizedException(IRequest request, IResponse response)
+            : this(request, response, defaultMessage)
         {
         }
 
-        public UnauthorizedException(string errorMessage)
-            : base(errorMessage)
+        internal UnauthorizedException(IRequest request, IResponse response, string errorMessage)
+            : base(request, response, errorMessage)
         {
         }
     }

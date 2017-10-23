@@ -1,4 +1,6 @@
 ﻿using System;
+using Toggl.Ultrawave.Network;
+
 namespace Toggl.Ultrawave.Exceptions
 {
     public sealed class DeserializationException<T> : ApiException
@@ -7,8 +9,8 @@ namespace Toggl.Ultrawave.Exceptions
 
         public string Json { get; set; }
 
-        public DeserializationException(string json)
-            : base(string.Format(errorMessage, typeof(T).Name))
+        internal DeserializationException(IRequest request, IResponse response, string json)
+            : base(request, response, string.Format(errorMessage, typeof(T).Name))
         {
             Json = json;
         }

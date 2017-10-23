@@ -1,16 +1,18 @@
-﻿namespace Toggl.Ultrawave.Exceptions
+﻿using Toggl.Ultrawave.Network;
+
+namespace Toggl.Ultrawave.Exceptions
 {
     public class EndpointUnreachableException : ApiException
     {
         private const string defaultErrorMessage = "Api endpoint could not be reached.";
 
-        public EndpointUnreachableException()
-            : this(defaultErrorMessage)
+        internal EndpointUnreachableException(IRequest request, IResponse response)
+            : this(request, response, defaultErrorMessage)
         {
         }
 
-        public EndpointUnreachableException(string errorMessage)
-            : base(errorMessage)
+        internal EndpointUnreachableException(IRequest request, IResponse response, string errorMessage)
+            : base(request, response, errorMessage)
         {
         }
     }

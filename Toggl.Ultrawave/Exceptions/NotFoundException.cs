@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Toggl.Ultrawave.Network;
 
 namespace Toggl.Ultrawave.Exceptions
 {
@@ -8,13 +9,13 @@ namespace Toggl.Ultrawave.Exceptions
 
         private const string defaultMessage = "The resource was not found.";
 
-        public NotFoundException()
-            : this(defaultMessage)
+        internal NotFoundException(IRequest request, IResponse response)
+            : this(request, response, defaultMessage)
         {
         }
 
-        public NotFoundException(string errorMessage)
-            : base(errorMessage)
+        internal NotFoundException(IRequest request, IResponse response, string errorMessage)
+            : base(request, response, errorMessage)
         {
         }
     }

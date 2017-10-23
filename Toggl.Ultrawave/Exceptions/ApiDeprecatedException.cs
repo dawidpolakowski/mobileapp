@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Toggl.Ultrawave.Network;
 
 namespace Toggl.Ultrawave.Exceptions
 {
@@ -8,13 +9,13 @@ namespace Toggl.Ultrawave.Exceptions
 
         private const string defaultMessage = "This version of API is deprecated and the client must be updated to an up-to-date version.";
 
-        public ApiDeprecatedException()
-            : this(defaultMessage)
+        internal ApiDeprecatedException(IRequest request, IResponse response)
+            : this(request, response, defaultMessage)
         {
         }
 
-        public ApiDeprecatedException(string errorMessage)
-            : base(errorMessage)
+        internal ApiDeprecatedException(IRequest request, IResponse response, string errorMessage)
+            : base(request, response, errorMessage)
         {
         }
     }

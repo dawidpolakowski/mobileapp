@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Toggl.Ultrawave.Network;
 
 namespace Toggl.Ultrawave.Exceptions
 {
@@ -8,13 +9,13 @@ namespace Toggl.Ultrawave.Exceptions
 
         private const string defaultMessage = "This feature is not implemented.";
 
-        public NotImplementedException()
-            : this(defaultMessage)
+        internal NotImplementedException(IRequest request, IResponse response)
+            : this(request, response, defaultMessage)
         {
         }
 
-        public NotImplementedException(string errorMessage)
-            : base(errorMessage)
+        internal NotImplementedException(IRequest request, IResponse response, string errorMessage)
+            : base(request, response, errorMessage)
         {
         }
     }

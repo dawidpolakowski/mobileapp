@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Toggl.Ultrawave.Network;
 
 namespace Toggl.Ultrawave.Exceptions
 {
@@ -9,13 +10,13 @@ namespace Toggl.Ultrawave.Exceptions
 
         private const string defaultMessage = "This version of client application is deprecated and must be updated to an up-to-date version.";
 
-        public ClientDeprecatedException()
-            : this(defaultMessage)
+        internal ClientDeprecatedException(IRequest request, IResponse response)
+            : this(request, response, defaultMessage)
         {
         }
 
-        public ClientDeprecatedException(string errorMessage)
-            : base(errorMessage)
+        internal ClientDeprecatedException(IRequest request, IResponse response, string errorMessage)
+            : base(request, response, errorMessage)
         {
         }
     }

@@ -1,11 +1,11 @@
-﻿using System.Net;
+﻿using Toggl.Ultrawave.Network;
 
 namespace Toggl.Ultrawave.Exceptions
 {
     public abstract class ClientErrorException : ApiException
     {
-        protected ClientErrorException(string errorMessage)
-            : base(errorMessage)
+        internal ClientErrorException(IRequest request, IResponse response, string errorMessage)
+            : base(request, response, errorMessage)
         {
         }
     }

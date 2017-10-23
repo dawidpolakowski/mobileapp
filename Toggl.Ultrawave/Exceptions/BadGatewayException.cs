@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Toggl.Ultrawave.Network;
 
 namespace Toggl.Ultrawave.Exceptions
 {
@@ -8,13 +9,13 @@ namespace Toggl.Ultrawave.Exceptions
 
         private const string defaultMessage = "Bad gateway.";
 
-        public BadGatewayException()
-            : this(defaultMessage)
+        internal BadGatewayException(IRequest request, IResponse response)
+            : this(request, response, defaultMessage)
         {
         }
 
-        public BadGatewayException(string errorMessage)
-            : base(errorMessage)
+        internal BadGatewayException(IRequest request, IResponse response, string errorMessage)
+            : base(request, response, errorMessage)
         {
         }
     }

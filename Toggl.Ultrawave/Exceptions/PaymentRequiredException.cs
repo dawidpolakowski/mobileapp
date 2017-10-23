@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Toggl.Ultrawave.Network;
 
 namespace Toggl.Ultrawave.Exceptions
 {
@@ -8,13 +9,13 @@ namespace Toggl.Ultrawave.Exceptions
 
         private const string defaultMessage = "Payment is required for this request.";
 
-        public PaymentRequiredException()
-            : this(defaultMessage)
+        internal PaymentRequiredException(IRequest request, IResponse response)
+            : this(request, response, defaultMessage)
         {
         }
 
-        public PaymentRequiredException(string errorMessage)
-            : base(errorMessage)
+        internal PaymentRequiredException(IRequest request, IResponse response, string errorMessage)
+            : base(request, response, errorMessage)
         {
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Toggl.Ultrawave.Network;
 
 namespace Toggl.Ultrawave.Exceptions
 {
@@ -8,15 +9,15 @@ namespace Toggl.Ultrawave.Exceptions
 
         private const string defaultMessage = "The server responded with an unexpected HTTP status code.";
 
-        public UnknownApiErrorException(HttpStatusCode httpCode)
-            : this(defaultMessage, httpCode)
+        internal UnknownApiErrorException(IRequest request, IResponse response)
+            : this(request, response, defaultMessage)
         {
         }
 
-        public UnknownApiErrorException(string errorMessage, HttpStatusCode httpCode)
-            : base(errorMessage)
+        internal UnknownApiErrorException(IRequest request, IResponse response, string errorMessage)
+            : base(request, response, errorMessage)
         {
-            HttpCode = httpCode;
+            this.HttpCode = response.StatusCode;
         }
     }
 }

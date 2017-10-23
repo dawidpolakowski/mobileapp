@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Toggl.Ultrawave.Network;
 
 namespace Toggl.Ultrawave.Exceptions
 {
@@ -8,13 +9,13 @@ namespace Toggl.Ultrawave.Exceptions
 
         private const string defaultMessage = "The payload is too large, split it into batches.";
 
-        public RequestEntityTooLargeException()
-            : this(defaultMessage)
+        internal RequestEntityTooLargeException(IRequest request, IResponse response)
+            : this(request, response, defaultMessage)
         {
         }
 
-        public RequestEntityTooLargeException(string errorMessage)
-            : base(errorMessage)
+        internal RequestEntityTooLargeException(IRequest request, IResponse response, string errorMessage)
+            : base(request, response, errorMessage)
         {
         }
     }
