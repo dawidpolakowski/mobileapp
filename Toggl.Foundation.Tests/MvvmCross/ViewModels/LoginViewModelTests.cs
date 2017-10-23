@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -479,7 +480,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                 var scheduler = new TestScheduler();
                 var forbiddenException = new ForbiddenException(
                     new Request("", new Uri("https://what.ever"), new HttpHeader[0], HttpMethod.Get),
-                    new Response("", false, "application/json", System.Net.HttpStatusCode.Forbidden));
+                    new Response("", false, "application/json", new List<KeyValuePair<string, IEnumerable<string>>>(), System.Net.HttpStatusCode.Forbidden));
                 var notification = Notification.CreateOnError<ITogglDataSource>(forbiddenException);
                 var message = new Recorded<Notification<ITogglDataSource>>(0, notification);
                 var observable = scheduler.CreateColdObservable(message);
@@ -518,7 +519,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                 var scheduler = new TestScheduler();
                 var forbiddenException = new ForbiddenException(
                     new Request("", new Uri("https://what.ever"), new HttpHeader[0], HttpMethod.Get),
-                    new Response("", false, "application/json", System.Net.HttpStatusCode.Forbidden));
+                    new Response("", false, "application/json", new List<KeyValuePair<string, IEnumerable<string>>>(), System.Net.HttpStatusCode.Forbidden));
                 var notification = Notification.CreateOnError<ITogglDataSource>(forbiddenException);
                 var message = new Recorded<Notification<ITogglDataSource>>(0, notification);
                 var observable = scheduler.CreateColdObservable(message);

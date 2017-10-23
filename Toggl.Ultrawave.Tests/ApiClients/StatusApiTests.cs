@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -51,7 +52,7 @@ namespace Toggl.Ultrawave.Tests.Clients
             {
                 apiClient
                     .Send(Arg.Any<IRequest>())
-                    .Returns(x => new Response("OK", true, "text/plain", OK));
+                    .Returns(x => new Response("OK", true, "text/plain", new List<KeyValuePair<string, IEnumerable<string>>>(), OK));
 
                 statusApi.IsAvailable().Wait();
             }
@@ -61,7 +62,7 @@ namespace Toggl.Ultrawave.Tests.Clients
             {
                 apiClient
                     .Send(Arg.Any<IRequest>())
-                    .Returns(x => new Response("PANIC", false, "text/plain", InternalServerError));
+                    .Returns(x => new Response("PANIC", false, "text/plain", new List<KeyValuePair<string, IEnumerable<string>>>(), InternalServerError));
 
                 Action gettingServerStatus = () => statusApi.IsAvailable().Wait();
 

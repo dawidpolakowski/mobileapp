@@ -184,7 +184,7 @@ namespace Toggl.Foundation.Tests.Sync.States
 
             private static IRequest request => new Request("", new Uri("https://what.ever"), new HttpHeader[0], HttpMethod.Get);
 
-            private static IResponse response => new Response("", false, "application/json", System.Net.HttpStatusCode.Forbidden);
+            private static IResponse response => new Response("", false, "application/json", new List<KeyValuePair<string, IEnumerable<string>>>(), System.Net.HttpStatusCode.Forbidden);
         }
     }
 }
