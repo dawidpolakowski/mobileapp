@@ -96,6 +96,7 @@ namespace Toggl.Ultrawave.ApiClients
             
             return Observable.Create<T>(async observer =>
             {
+                await Task.Delay(2000);
                 observer.OnError(new Exception("Blah blah blah"));
             });
         }
