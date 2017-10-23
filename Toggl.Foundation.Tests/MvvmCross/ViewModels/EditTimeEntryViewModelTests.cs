@@ -501,42 +501,47 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                 long? taskId = null,
                 string taskName = null)
             {
-                await prepareTimeEntry(10);
+                long timeEntryId = 10;
+                prepareTimeEntry(timeEntryId);
 
                 if (projectId.HasValue)
-                    prepareProject(projectId.Value, projectName, projectColor, clientName);
+                    prepareProject(projectId.Value, projectName, projectColor, clientName, 0);
 
                 if (taskId.HasValue)
                     prepareTask(taskId.Value, taskName);
 
-                NavigationService.Navigate<(long?, long?, long), (long?, long?)>(typeof(SelectProjectViewModel), Arg.Any<(long?, long?, long)>())
-                    .Returns((projectId, taskId));
+                prepareNavigationService(projectId, taskId);
+
+                ViewModel.Prepare(timeEntryId);
+                await ViewModel.Initialize();
             }
 
-            private async Task prepareTimeEntry(long id)
+            private IDatabaseTimeEntry prepareTimeEntry(long id)
             {
                 var timeEntry = Substitute.For<IDatabaseTimeEntry>();
                 timeEntry.Id.Returns(id);
+                timeEntry.Description.Returns("Fuckface");
                 timeEntry.Project.Name.Returns(Guid.NewGuid().ToString());
                 timeEntry.Project.Color.Returns(Guid.NewGuid().ToString());
                 timeEntry.Task.Name.Returns(Guid.NewGuid().ToString());
                 timeEntry.Project.Client.Name.Returns(Guid.NewGuid().ToString());
-                DataSource.TimeEntries.GetById(Arg.Is(id))
+                DataSource.TimeEntries.GetById(Arg.Is<long>((long)id))
                     .Returns(Observable.Return(timeEntry));
-                ViewModel.Prepare(id);
-                await ViewModel.Initialize();
+                return timeEntry;
             }
 
-            private void prepareProject(
-                long projectId, string projectName, string projectColor, string clientName)
+            private IDatabaseProject prepareProject(
+                long projectId, string projectName, string projectColor, string clientName, long workspaceId)
             {
                 var project = Substitute.For<IDatabaseProject>();
                 project.Id.Returns(projectId);
                 project.Name.Returns(projectName);
                 project.Color.Returns(projectColor);
                 project.Client.Name.Returns(clientName);
+                project.WorkspaceId.Returns(workspaceId);
                 DataSource.Projects.GetById(Arg.Is(projectId))
                     .Returns(Observable.Return(project));
+                return project;
             }
 
             private void prepareTask(long taskId, string taskName)
@@ -547,6 +552,23 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                 DataSource.Tasks.GetById(Arg.Is(task.Id))
                     .Returns(Observable.Return(task));
             }
+
+            private void prepareNavigationService(long? projectId, long? taskId)
+                => NavigationService
+                       .Navigate<(long?, long?, long), (long?, long?)>(
+                           typeof(SelectProjectViewModel),
+                           Arg.Any<(long?, long?, long)>())
+                       .Returns((projectId, taskId));
+
+            private List<IDatabaseTag> createTags(int count)
+                => Enumerable.Range(10000, count)
+                    .Select(i =>
+                    {
+                        var tag = Substitute.For<IDatabaseTag>();
+                        tag.Name.Returns($"Tag{i}");
+                        tag.Id.Returns(i);
+                        return tag;
+                    }).ToList();
 
             [Fact]
             public async Task SetsTheProject()
@@ -610,6 +632,28 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                 await ViewModel.SelectProjectCommand.ExecuteAsync();
 
                 ViewModel.Task.Should().BeEmpty();
+            }
+
+            [Fact]
+            public async Task RemovesTagsIfProjectFromAnotherWorkspaceWasSelected()
+            {
+                var initialTagCount = 10;
+                long timeEntryId = 10;
+                long initialProjectId = 11;
+                long newProjectId = 12;
+                prepareProject(initialProjectId, "Initial project", "#123456", "Some client", 13);
+                prepareProject(newProjectId, "New project", "AABBCC", "Some client", 14);
+                prepareNavigationService(newProjectId, null);
+                var timeEntry = prepareTimeEntry(timeEntryId);
+                var tags = createTags(initialTagCount);
+                timeEntry.Tags.Returns(tags);
+                ViewModel.Prepare(timeEntryId);
+                await ViewModel.Initialize();
+                ViewModel.Tags.Should().HaveCount(initialTagCount);
+
+                await ViewModel.SelectProjectCommand.ExecuteAsync();
+
+                ViewModel.Tags.Should().HaveCount(0);
             }
         }
     }

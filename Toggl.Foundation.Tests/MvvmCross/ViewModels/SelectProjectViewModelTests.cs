@@ -163,6 +163,47 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                         parameter => parameter.projectId == null
                                      && parameter.taskId == null));
             }
+
+            [Fact]
+            public void ShowsAlertIfWorkspaceIsGoingToBeChanged()
+            {
+                var oldWorkspaceId = 10;
+                var newWorkspaceId = 11;
+                ViewModel.Prepare((null, null, oldWorkspaceId));
+                var project = Substitute.For<IDatabaseProject>();
+                project.WorkspaceId.Returns(newWorkspaceId);
+
+                ViewModel.SelectProjectCommand.Execute(new ProjectSuggestion(project));
+
+                DialogService.Received().Confirm(
+                    Arg.Is(Resources.DifferentWorkspaceAlertTitle),
+                    Arg.Is(Resources.DifferentWorkspaceAlertMessage),
+                    Arg.Is(Resources.Ok),
+                    Arg.Is(Resources.Cancel),
+                    Arg.Any<Action>(),
+                    Arg.Any<Action>()
+                );
+            }
+
+            [Fact]
+            public void DoesNotShowsAlertIfWorkspaceIsNotGoingToBeChanged()
+            {
+                var workspaceId = 10;
+                ViewModel.Prepare((null, null, workspaceId));
+                var project = Substitute.For<IDatabaseProject>();
+                project.WorkspaceId.Returns(workspaceId);
+
+                ViewModel.SelectProjectCommand.Execute(new ProjectSuggestion(project));
+
+                DialogService.DidNotReceive().Confirm(
+                    Arg.Any<string>(),
+                    Arg.Any<string>(),
+                    Arg.Any<string>(),
+                    Arg.Any<string>(),
+                    Arg.Any<Action>(),
+                    Arg.Any<Action>()
+                );
+            }
         }
 
         public sealed class TheTextProperty : SelectProjectViewModelTest
