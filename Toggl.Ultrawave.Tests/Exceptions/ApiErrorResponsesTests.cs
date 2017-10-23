@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using FluentAssertions;
 using Toggl.Ultrawave.Exceptions;
 using Toggl.Ultrawave.Helpers;
@@ -61,11 +62,96 @@ namespace Toggl.Ultrawave.Tests.Exceptions
             }
         }
 
+        public sealed class Serialization
+        {
+            [Fact]
+            public void CreatesAStringWithBodyAndNoHeaders()
+            {
+                string body = "Body.";
+                var endpoint = new Uri("https://www.some.url");
+                var method = new HttpMethod("GET");
+                var request = new Request("", endpoint, new HttpHeader[0], method);
+                var response = new Response(body, false, "application/json", new List<KeyValuePair<string, IEnumerable<string>>>(), HttpStatusCode.InternalServerError);
+                var exception = new InternalServerErrorException(request, response, "Custom message.");
+                var expectedSerialization = $"ApiException for request {method} {endpoint}: Response: (Status code [InternalServerError]) (Headers: []) (Body: {body}) (Message: Custom message.)";
+
+                var serialized = exception.ToString();
+
+                serialized.Should().Be(expectedSerialization);
+            }
+
+            [Fact]
+            public void CreatesAStringWithBodyAndWithHeaders()
+            {
+                string body = "Body of a response with headers.";
+                var endpoint = new Uri("https://www.some.url/endpoint");
+                var method = new HttpMethod("GET");
+                var request = new Request("", endpoint, new HttpHeader[0], method);
+                var headers = new[] { new KeyValuePair<string, IEnumerable<string>>("abc", new string[0]) };
+                var response = new Response(body, false, "application/json", headers, HttpStatusCode.InternalServerError);
+                var exception = new InternalServerErrorException(request, response, "Custom message.");
+                var expectedSerialization = $"ApiException for request {method} {endpoint}: Response: (Status code [InternalServerError]) (Headers: [abc: []]) (Body: {body}) (Message: Custom message.)";
+
+                var serialized = exception.ToString();
+
+                serialized.Should().Be(expectedSerialization);
+            }
+
+            [Fact]
+            public void SerializesOneHeaderKeyWithNoValues()
+            {
+                var headers = new[] { new KeyValuePair<string, IEnumerable<string>>("abc", new string[0]) };
+                var expectedSerialization = "abc: []";
+
+                var serialized = ApiException.SerializeHeaders(headers);
+
+                serialized.Should().Be(expectedSerialization);
+            }
+
+            [Fact]
+            public void SerializesOneHeaderKeyWithOneValue()
+            {
+                var headers = new[] { new KeyValuePair<string, IEnumerable<string>>("abc", new[] { "def" }) };
+                var expectedSerialization = "abc: [def]";
+
+                var serialized = ApiException.SerializeHeaders(headers);
+
+                serialized.Should().Be(expectedSerialization);
+            }
+
+            [Fact]
+            public void SerializesOneHeaderKeyWithMultipleValues()
+            {
+                var headers = new[] { new KeyValuePair<string, IEnumerable<string>>("abc", new[] { "def", "ghi", "jkl" }) };
+                var expectedSerialization = "abc: [def, ghi, jkl]";
+
+                var serialized = ApiException.SerializeHeaders(headers);
+
+                serialized.Should().Be(expectedSerialization);
+            }
+
+            [Fact]
+            public void SerializesMultipleHeaderKeyWithZeroOneOrMultipleValues()
+            {
+                var headers = new[]
+                {
+                    new KeyValuePair<string, IEnumerable<string>>("abc", new[] { "def", "ghi", "jkl" }),
+                    new KeyValuePair<string, IEnumerable<string>>("xyz", new string[0]),
+                    new KeyValuePair<string, IEnumerable<string>>("uvw", new[] { "123" })
+                };
+                var expectedSerialization = "abc: [def, ghi, jkl], xyz: [], uvw: [123]";
+
+                var serialized = ApiException.SerializeHeaders(headers);
+
+                serialized.Should().Be(expectedSerialization);
+            }
+        }
+
         private static Request createRequest(HttpMethod method)
             => new Request("{\"a\":123}", new Uri("https://integration.tests"), new[] { new HttpHeader("X", "Y") }, method);
 
         private static Response createErrorResponse(HttpStatusCode code, string rawData = "")
-            => new Response(rawData, false, "application/json", code);
+            => new Response(rawData, false, "application/json", new List<KeyValuePair<string, IEnumerable<string>>>(), code);
 
         public static IEnumerable<object[]> ClientErrorsList
             => new[]
