@@ -16,10 +16,11 @@ namespace Toggl.Foundation
             this IRepository<TModel> repository,
             long id,
             TModel entity,
-            Func<TModel, TModel, ConflictResolutionMode> conflictResolution)
+            Func<TModel, TModel, ConflictResolutionMode> conflictResolution,
+            IRivalsResolver<TModel> rivalsResolver = null)
             where TModel : IBaseModel, IDatabaseSyncable
             => repository
-                .BatchUpdate(new[] { (id, entity) }, conflictResolution)
+                .BatchUpdate(new[] { (id, entity) }, conflictResolution, rivalsResolver)
                 .SingleAsync()
                 .Select(entities => entities.First());
     }

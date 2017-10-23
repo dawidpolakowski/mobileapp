@@ -38,7 +38,11 @@ namespace Toggl.Daneel.ViewControllers
                       .For(v => v.BindVisibility())
                       .To(vm => vm.IsEmpty)
                       .WithConversion(new MvxVisibilityValueConverter());
-            
+
+            bindingSet.Bind(tableViewSource)
+                      .For(v => v.StartTimeEntryCommand)
+                      .To(vm => vm.StartTimeEntryCommand);
+
             bindingSet.Apply();
         }
 

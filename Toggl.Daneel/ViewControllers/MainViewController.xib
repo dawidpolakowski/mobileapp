@@ -12,10 +12,11 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MainViewController">
             <connections>
                 <outlet property="CurrentTimeEntryCard" destination="vou-B4-go4" id="name-outlet-vou-B4-go4"/>
-                <outlet property="CurrentTimeEntryDescriptionLabel" destination="edS-73-7O7" id="name-outlet-edS-73-7O7"/>
+                <outlet property="CurrentTimeEntryDescriptionLabel" destination="eE0-Ob-Ngt" id="hdk-b7-5VN"/>
                 <outlet property="CurrentTimeEntryElapsedTimeLabel" destination="0J7-Pj-geT" id="name-outlet-0J7-Pj-geT"/>
                 <outlet property="EditTimeEntryButton" destination="qpc-Yb-DcP" id="name-outlet-qpc-Yb-DcP"/>
                 <outlet property="MainPagedScrollView" destination="fyC-Me-BcE" id="name-outlet-fyC-Me-BcE"/>
+                <outlet property="RunningEntryDescriptionFadingView" destination="E3W-8n-IfX" id="6vQ-hC-IHg"/>
                 <outlet property="SpiderBroImageView" destination="mpU-UI-dLB" id="name-outlet-mpU-UI-dLB"/>
                 <outlet property="StartTimeEntryButton" destination="4Kk-Hz-RBS" id="name-outlet-4Kk-Hz-RBS"/>
                 <outlet property="StopTimeEntryButton" destination="Ddo-IW-xE3" id="name-outlet-Ddo-IW-xE3"/>
@@ -43,7 +44,7 @@
                                     <rect key="frame" x="0.0" y="-52" width="375" height="52"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wzp-dn-kfL">
-                                            <rect key="frame" x="172" y="32" width="32" height="14"/>
+                                            <rect key="frame" x="172.5" y="32" width="31.5" height="14"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="14" id="xNy-2r-7Hg"/>
                                             </constraints>
@@ -86,7 +87,7 @@
                                             </constraints>
                                         </view>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5K9-cC-7E8">
-                                            <rect key="frame" x="0.0" y="44" width="375" height="477"/>
+                                            <rect key="frame" x="0.0" y="44" width="375" height="477.5"/>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <userDefinedRuntimeAttributes>
                                                 <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
@@ -95,7 +96,7 @@
                                             </userDefinedRuntimeAttributes>
                                         </view>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wKL-ZP-Ff4">
-                                            <rect key="frame" x="142" y="545" width="91" height="27"/>
+                                            <rect key="frame" x="142" y="545.5" width="91" height="26.5"/>
                                             <string key="text">SWIPE UP
 TO SEE THE LOG</string>
                                             <fontDescription key="fontDescription" type="system" weight="medium" pointSize="11"/>
@@ -187,7 +188,7 @@ TO SEE THE LOG</string>
                     <rect key="frame" x="0.0" y="611" width="375" height="64"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0:15:25" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0J7-Pj-geT">
-                            <rect key="frame" x="166" y="12" width="44" height="15"/>
+                            <rect key="frame" x="166" y="12" width="44" height="14.5"/>
                             <fontDescription key="fontDescription" type="system" weight="medium" pointSize="12"/>
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
@@ -209,24 +210,60 @@ TO SEE THE LOG</string>
                             </constraints>
                             <state key="normal" image="stopIcon"/>
                         </button>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Landing page" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="edS-73-7O7">
-                            <rect key="frame" x="149" y="30" width="77" height="14"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                            <nil key="textColor"/>
-                            <nil key="highlightedColor"/>
-                        </label>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="E3W-8n-IfX" userLabel="Fading view">
+                            <rect key="frame" x="48" y="26.5" width="279" height="37.5"/>
+                            <subviews>
+                                <scrollView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Tuf-H4-v8x" customClass="MarqueeView">
+                                    <rect key="frame" x="0.0" y="0.0" width="279" height="37.5"/>
+                                    <subviews>
+                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PtF-34-2BI">
+                                            <rect key="frame" x="0.0" y="0.0" width="207" height="18.5"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="New iOS app landing page design" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eE0-Ob-Ngt">
+                                                    <rect key="frame" x="8" y="4" width="191" height="15"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            <constraints>
+                                                <constraint firstItem="eE0-Ob-Ngt" firstAttribute="top" secondItem="PtF-34-2BI" secondAttribute="top" constant="4" id="67Y-0D-FlA"/>
+                                                <constraint firstAttribute="bottom" secondItem="eE0-Ob-Ngt" secondAttribute="bottom" id="cyQ-fc-PeJ"/>
+                                                <constraint firstAttribute="trailing" secondItem="eE0-Ob-Ngt" secondAttribute="trailing" constant="8" id="is4-tP-PRQ"/>
+                                                <constraint firstItem="eE0-Ob-Ngt" firstAttribute="leading" secondItem="PtF-34-2BI" secondAttribute="leading" constant="8" id="y5C-UV-Wnv"/>
+                                            </constraints>
+                                        </view>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="trailing" secondItem="PtF-34-2BI" secondAttribute="trailing" id="27q-tT-wSQ"/>
+                                        <constraint firstAttribute="bottom" secondItem="PtF-34-2BI" secondAttribute="bottom" id="7fY-za-8ns"/>
+                                        <constraint firstItem="PtF-34-2BI" firstAttribute="top" secondItem="Tuf-H4-v8x" secondAttribute="top" id="ZEU-LI-KZf"/>
+                                        <constraint firstItem="PtF-34-2BI" firstAttribute="leading" secondItem="Tuf-H4-v8x" secondAttribute="leading" id="hTw-1b-QSv"/>
+                                    </constraints>
+                                </scrollView>
+                            </subviews>
+                            <constraints>
+                                <constraint firstItem="Tuf-H4-v8x" firstAttribute="leading" secondItem="E3W-8n-IfX" secondAttribute="leading" id="PZe-2U-juV"/>
+                                <constraint firstAttribute="bottom" secondItem="Tuf-H4-v8x" secondAttribute="bottom" id="aKB-eu-R2G"/>
+                                <constraint firstAttribute="trailing" secondItem="Tuf-H4-v8x" secondAttribute="trailing" id="eAk-xg-tnP"/>
+                                <constraint firstItem="Tuf-H4-v8x" firstAttribute="top" secondItem="E3W-8n-IfX" secondAttribute="top" id="hKI-kl-AQS"/>
+                            </constraints>
+                        </view>
                     </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
+                        <constraint firstAttribute="trailing" secondItem="E3W-8n-IfX" secondAttribute="trailing" constant="48" id="1A5-Au-Kqb"/>
                         <constraint firstItem="qpc-Yb-DcP" firstAttribute="centerY" secondItem="vou-B4-go4" secondAttribute="centerY" constant="-4" id="3oY-17-nBu"/>
                         <constraint firstItem="0J7-Pj-geT" firstAttribute="top" secondItem="vou-B4-go4" secondAttribute="top" constant="12" id="E1E-1G-lz6"/>
                         <constraint firstAttribute="trailing" secondItem="Ddo-IW-xE3" secondAttribute="trailing" id="I2f-56-ZfV"/>
                         <constraint firstItem="qpc-Yb-DcP" firstAttribute="leading" secondItem="vou-B4-go4" secondAttribute="leading" id="JQx-SZ-5dm"/>
                         <constraint firstItem="Ddo-IW-xE3" firstAttribute="centerY" secondItem="vou-B4-go4" secondAttribute="centerY" constant="-4" id="bLM-7i-XMM"/>
-                        <constraint firstItem="edS-73-7O7" firstAttribute="centerX" secondItem="vou-B4-go4" secondAttribute="centerX" id="bhV-fd-XD9"/>
-                        <constraint firstAttribute="bottom" secondItem="edS-73-7O7" secondAttribute="bottom" constant="20" id="dDG-70-dpU"/>
                         <constraint firstAttribute="height" constant="64" id="frl-NQ-7dP"/>
+                        <constraint firstAttribute="bottom" secondItem="E3W-8n-IfX" secondAttribute="bottom" id="k3B-ta-yO5"/>
+                        <constraint firstItem="E3W-8n-IfX" firstAttribute="top" secondItem="0J7-Pj-geT" secondAttribute="bottom" id="lQe-PR-fVd"/>
                         <constraint firstItem="0J7-Pj-geT" firstAttribute="centerX" secondItem="vou-B4-go4" secondAttribute="centerX" id="oCw-6x-no1"/>
+                        <constraint firstItem="E3W-8n-IfX" firstAttribute="leading" secondItem="vou-B4-go4" secondAttribute="leading" constant="48" id="qd2-Cm-m2L"/>
                     </constraints>
                 </view>
             </subviews>

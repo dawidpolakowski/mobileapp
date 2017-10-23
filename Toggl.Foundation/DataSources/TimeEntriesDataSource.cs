@@ -11,6 +11,7 @@ using Toggl.PrimeRadiant;
 using Toggl.PrimeRadiant.Models;
 using Toggl.Foundation.DTOs;
 using Toggl.Foundation.Exceptions;
+using Toggl.Foundation.Sync.ConflictResolution;
 
 namespace Toggl.Foundation.DataSources
 {
@@ -24,6 +25,8 @@ namespace Toggl.Foundation.DataSources
         private readonly Subject<IDatabaseTimeEntry> timeEntryCreatedSubject = new Subject<IDatabaseTimeEntry>();
         private readonly Subject<(long Id, IDatabaseTimeEntry Entity)> timeEntryUpdatedSubject = new Subject<(long, IDatabaseTimeEntry)>();
         private readonly Subject<long> timeEntryDeletedSubject = new Subject<long>();
+        private readonly TimeEntryRivalsResolver rivalsResolver;
+        private readonly Func<IDatabaseTimeEntry, IDatabaseTimeEntry, ConflictResolutionMode> alwaysCreate = (a, b) => ConflictResolutionMode.Create;
 
         public IObservable<bool> IsEmpty { get; }
 
@@ -64,6 +67,8 @@ namespace Toggl.Foundation.DataSources
                     .Merge(TimeEntryCreated)
                     .SelectMany(_ => GetAll())
                     .Select(timeEntries => !timeEntries.Any());
+
+            rivalsResolver = new TimeEntryRivalsResolver(timeService);
         }
 
         public IObservable<IEnumerable<IDatabaseTimeEntry>> GetAll()
@@ -115,7 +120,8 @@ namespace Toggl.Foundation.DataSources
 
         public IObservable<IDatabaseTimeEntry> Create(IDatabaseTimeEntry entity)
             => repository
-                .Create(entity)
+                .UpdateWithConflictResolution(entity.Id, entity, alwaysCreate, rivalsResolver)
+                .Select(result => ((CreateResult<IDatabaseTimeEntry>)result).Entity)
                 .Do(timeEntryCreatedSubject.OnNext);
 
         public IObservable<IDatabaseTimeEntry> Update(long id, IDatabaseTimeEntry entity)

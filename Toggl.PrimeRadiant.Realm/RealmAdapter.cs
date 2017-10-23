@@ -41,6 +41,7 @@ namespace Toggl.PrimeRadiant.Realm
         {
             Ensure.Argument.IsNotNull(clone, nameof(clone));
             Ensure.Argument.IsNotNull(matchEntity, nameof(matchEntity));
+            Ensure.Argument.IsNotNull(getId, nameof(getId));
 
             this.clone = clone;
             this.matchEntity = matchEntity;

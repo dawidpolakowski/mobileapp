@@ -5,6 +5,7 @@ using Foundation;
 using MvvmCross.Binding.BindingContext;
 using MvvmCross.Binding.iOS;
 using MvvmCross.Binding.iOS.Views;
+using MvvmCross.Core.ViewModels;
 using MvvmCross.Plugins.Color;
 using MvvmCross.Plugins.Visibility;
 using Toggl.Foundation.MvvmCross.Converters;
@@ -20,6 +21,8 @@ namespace Toggl.Daneel.Views
 
         public static readonly NSString Key = new NSString(nameof(SuggestionsViewCell));
         public static readonly UINib Nib;
+
+        public IMvxAsyncCommand<Suggestion> StartTimeEntryCommand { get; set; }
 
         static SuggestionsViewCell()
         {
@@ -45,6 +48,8 @@ namespace Toggl.Daneel.Views
                 EndPoint = new CGPoint(1.0, 0.5),
                 Frame = FadeView.Bounds
             });
+
+            StartButton.TouchUpInside += onStartButtonTap;
 
             this.DelayBind(() =>
             {
@@ -94,5 +99,16 @@ namespace Toggl.Daneel.Views
                 bindingSet.Apply();
             });
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (!disposing) return;
+            StartButton.TouchUpInside -= onStartButtonTap;
+        }
+
+        private async void onStartButtonTap(object sender, EventArgs e)
+            => await StartTimeEntryCommand?.ExecuteAsync((Suggestion)DataContext);
     }
 }

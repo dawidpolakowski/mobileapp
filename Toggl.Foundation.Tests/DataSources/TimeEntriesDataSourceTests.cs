@@ -106,12 +106,21 @@ namespace Toggl.Foundation.Tests.DataSources
 
         public sealed class TheStartMethod : TimeEntryDataSourceTest
         {
+            public TheStartMethod()
+            {
+                Repository.BatchUpdate(
+                    Arg.Any<IEnumerable<(long, IDatabaseTimeEntry)>>(),
+                    Arg.Any<Func<IDatabaseTimeEntry, IDatabaseTimeEntry, ConflictResolutionMode>>(),
+                    Arg.Any<IRivalsResolver<IDatabaseTimeEntry>>())
+                    .Returns(info => Observable.Return(new[] { new CreateResult<IDatabaseTimeEntry>(info.Arg<IEnumerable<(long, IDatabaseTimeEntry Entity)>>().First().Entity) }));
+            }
+
             [Fact]
             public async ThreadingTask CreatesANewTimeEntryInTheDatabase()
             {
                 await TimeEntriesSource.Start(CreateDto(ValidTime, ValidDescription, true, ProjectId));
 
-                await Repository.Received().Create(Arg.Any<IDatabaseTimeEntry>());
+                await Repository.ReceivedWithAnyArgs().BatchUpdate(null, null, null);
             }
 
             [Fact]
@@ -119,7 +128,10 @@ namespace Toggl.Foundation.Tests.DataSources
             {
                 await TimeEntriesSource.Start(CreateDto(ValidTime, ValidDescription, true, ProjectId));
 
-                await Repository.Received().Create(Arg.Is<IDatabaseTimeEntry>(te => te.SyncStatus == SyncStatus.SyncNeeded));
+                await Repository.Received().BatchUpdate(
+                    Arg.Is<IEnumerable<(long, IDatabaseTimeEntry Entity)>>(enumerable => enumerable.First().Entity.SyncStatus == SyncStatus.SyncNeeded),
+                    Arg.Any<Func<IDatabaseTimeEntry, IDatabaseTimeEntry, ConflictResolutionMode>>(),
+                    Arg.Any<IRivalsResolver<IDatabaseTimeEntry>>());
             }
 
             [Theory]
@@ -129,7 +141,7 @@ namespace Toggl.Foundation.Tests.DataSources
             {
                 await TimeEntriesSource.Start(CreateDto(ValidTime, ValidDescription, billable, ProjectId));
 
-                await Repository.Received().Create(Arg.Is<IDatabaseTimeEntry>(te => te.Billable == billable));
+                await batchUpdateCalledWith(te => te.Billable == billable);
             }
 
             [Fact]
@@ -137,7 +149,7 @@ namespace Toggl.Foundation.Tests.DataSources
             {
                 await TimeEntriesSource.Start(CreateDto(ValidTime, ValidDescription, true, ProjectId));
 
-                await Repository.Received().Create(Arg.Is<IDatabaseTimeEntry>(te => te.Description == ValidDescription));
+                await batchUpdateCalledWith(te => te.Description == ValidDescription);
             }
 
             [Fact]
@@ -145,7 +157,7 @@ namespace Toggl.Foundation.Tests.DataSources
             {
                 await TimeEntriesSource.Start(CreateDto(ValidTime, ValidDescription, true, ProjectId));
 
-                await Repository.Received().Create(Arg.Is<IDatabaseTimeEntry>(te => te.Start == ValidTime));
+                await batchUpdateCalledWith(te => te.Start == ValidTime);
             }
 
             [Fact]
@@ -153,7 +165,7 @@ namespace Toggl.Foundation.Tests.DataSources
             {
                 await TimeEntriesSource.Start(CreateDto(ValidTime, ValidDescription, true, ProjectId));
 
-                await Repository.Received().Create(Arg.Is<IDatabaseTimeEntry>(te => te.ProjectId == ProjectId));
+                await batchUpdateCalledWith(te => te.ProjectId == ProjectId);
             }
 
             [Fact]
@@ -161,7 +173,7 @@ namespace Toggl.Foundation.Tests.DataSources
             {
                 await TimeEntriesSource.Start(CreateDto(ValidTime, ValidDescription, true, ProjectId));
 
-                await Repository.Received().Create(Arg.Is<IDatabaseTimeEntry>(te => te.UserId == UserId));
+                await batchUpdateCalledWith(te => te.UserId == UserId);
             }
 
             [Fact]
@@ -169,7 +181,7 @@ namespace Toggl.Foundation.Tests.DataSources
             {
                 await TimeEntriesSource.Start(CreateDto(ValidTime, ValidDescription, true, ProjectId, TaskId));
 
-                await Repository.Received().Create(Arg.Is<IDatabaseTimeEntry>(te => te.TaskId == TaskId));
+                await batchUpdateCalledWith(te => te.TaskId == TaskId);
             }
 
             [Fact]
@@ -177,7 +189,7 @@ namespace Toggl.Foundation.Tests.DataSources
             {
                 await TimeEntriesSource.Start(CreateDto(ValidTime, ValidDescription, true, ProjectId));
 
-                await Repository.Received().Create(Arg.Is<IDatabaseTimeEntry>(te => te.WorkspaceId == WorkspaceId));
+                await batchUpdateCalledWith(te => te.WorkspaceId == WorkspaceId);
             }
 
             [Fact]
@@ -185,7 +197,7 @@ namespace Toggl.Foundation.Tests.DataSources
             {
                 await TimeEntriesSource.Start(CreateDto(ValidTime, ValidDescription, true, ProjectId));
 
-                await Repository.Received().Create(Arg.Is<IDatabaseTimeEntry>(te => te.Id == -1));
+                await batchUpdateCalledWith(te => te.Id == -1);
             }
 
             [Fact]
@@ -197,7 +209,8 @@ namespace Toggl.Foundation.Tests.DataSources
                 await TimeEntriesSource.Start(CreateDto(ValidTime, ValidDescription, true, ProjectId));
 
                 var currentlyRunningTimeEntry = observer.Messages.Single().Value.Value;
-                await Repository.Received().Create(Arg.Is<IDatabaseTimeEntry>(te => te.Start == currentlyRunningTimeEntry.Start));
+                await batchUpdateCalledWith(te => te.Start == currentlyRunningTimeEntry.Start);
+
             }
 
             [Fact]
@@ -210,6 +223,14 @@ namespace Toggl.Foundation.Tests.DataSources
 
                 observer.Messages.Single().Value.Value.Id.Should().Be(-1);
                 observer.Messages.Single().Value.Value.Start.Should().Be(ValidTime);
+            }
+
+            private async ThreadingTask batchUpdateCalledWith(Predicate<IDatabaseTimeEntry> predicate)
+            {
+                await Repository.Received().BatchUpdate(
+                    Arg.Is<IEnumerable<(long, IDatabaseTimeEntry Entity)>>(enumerable => predicate(enumerable.First().Entity)),
+                    Arg.Any<Func<IDatabaseTimeEntry, IDatabaseTimeEntry, ConflictResolutionMode>>(),
+                    Arg.Any<IRivalsResolver<IDatabaseTimeEntry>>());
             }
         }
 

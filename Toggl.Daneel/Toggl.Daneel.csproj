@@ -526,6 +526,7 @@
     <Compile Include="Views\EditTimeEntryErrorView.designer.cs">
       <DependentUpon>EditTimeEntryErrorView.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\MarqueeView.cs" />
     <Compile Include="Binding\SwitchAnimatedOnTargetBinding.cs" />
     <Compile Include="Views\Onboarding\TrackPage.cs" />
     <Compile Include="Views\Onboarding\TrackPage.designer.cs">

@@ -4,8 +4,10 @@ using CoreGraphics;
 using Foundation;
 using MvvmCross.Binding.ExtensionMethods;
 using MvvmCross.Binding.iOS.Views;
+using MvvmCross.Core.ViewModels;
 using Toggl.Daneel.Views;
 using Toggl.Foundation;
+using Toggl.Foundation.Suggestions;
 using Toggl.Multivac.Extensions;
 using UIKit;
 
@@ -19,6 +21,8 @@ namespace Toggl.Daneel.ViewSources
         private const string emptyCellIdentifier = nameof(SuggestionsEmptyViewCell);
 
         private int maxNumberOfSuggestions;
+
+        public IMvxAsyncCommand<Suggestion> StartTimeEntryCommand { get; set; }
 
         public SuggestionsTableViewSource(UITableView tableView)
             : base(tableView)
@@ -57,6 +61,9 @@ namespace Toggl.Daneel.ViewSources
 
             if (item != null && cell is IMvxBindable bindable)
                 bindable.DataContext = item;
+
+            if (cell is SuggestionsViewCell suggestionCell)
+                suggestionCell.StartTimeEntryCommand = StartTimeEntryCommand;
 
             return cell;
         }

@@ -7,8 +7,11 @@ using System.Threading.Tasks;
 using MvvmCross.Core.ViewModels;
 using PropertyChanged;
 using Toggl.Foundation.DataSources;
+using Toggl.Foundation.DTOs;
+using Toggl.Foundation.Exceptions;
 using Toggl.Foundation.Suggestions;
 using Toggl.Multivac;
+using Toggl.PrimeRadiant.Models;
 
 namespace Toggl.Foundation.MvvmCross.ViewModels
 {
@@ -17,6 +20,7 @@ namespace Toggl.Foundation.MvvmCross.ViewModels
     {
         private readonly ITogglDataSource dataSource;
         private readonly ISuggestionProviderContainer suggestionProviders;
+        private readonly ITimeService timeService;
 
         private IDisposable emptyDatabaseDisposable;
 
@@ -26,13 +30,22 @@ namespace Toggl.Foundation.MvvmCross.ViewModels
         [DependsOn(nameof(Suggestions))]
         public bool IsEmpty => !Suggestions.Any();
 
-        public SuggestionsViewModel(ITogglDataSource dataSource, ISuggestionProviderContainer suggestionProviders)
+        public IMvxAsyncCommand<Suggestion> StartTimeEntryCommand { get; set; }
+
+        public SuggestionsViewModel(
+            ITogglDataSource dataSource,
+            ISuggestionProviderContainer suggestionProviders,
+            ITimeService timeService)
         {
             Ensure.Argument.IsNotNull(dataSource, nameof(dataSource));
             Ensure.Argument.IsNotNull(suggestionProviders, nameof(suggestionProviders));
+            Ensure.Argument.IsNotNull(timeService, nameof(timeService));
 
             this.dataSource = dataSource;
             this.suggestionProviders = suggestionProviders;
+            this.timeService = timeService;
+
+            StartTimeEntryCommand = new MvxAsyncCommand<Suggestion>(startTimeEntry);
         }
 
         public async override Task Initialize()
@@ -61,6 +74,23 @@ namespace Toggl.Foundation.MvvmCross.ViewModels
         {
             Suggestions.Add(suggestions);
             RaisePropertyChanged(nameof(IsEmpty));
+        }
+
+        private async Task startTimeEntry(Suggestion suggestion)
+        {
+            await dataSource.User
+                .Current()
+                .Select(user => new StartTimeEntryDTO
+                {
+                    UserId = user.Id,
+                    TaskId = suggestion.TaskId,
+                    ProjectId = suggestion.ProjectId,
+                    Description = suggestion.Description,
+                    WorkspaceId = suggestion.WorkspaceId,
+                    StartTime = timeService.CurrentDateTime
+                })
+                .SelectMany(dataSource.TimeEntries.Start)
+                .Do(_ => dataSource.SyncManager.PushSync());
         }
     }
 }
