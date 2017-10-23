@@ -63,6 +63,7 @@ namespace Toggl.Ultrawave.Tests.Integration.Helper
 
             using (var client = new HttpClient())
             {
+                client.Timeout = TimeSpan.FromSeconds(3);
                 Console.WriteLine($"WH1: send request: [${method}] ${endpoint}");
                 var response = await client.SendAsync(requestMessage);
                 Console.WriteLine($"WH2: received response: [${method}] ${endpoint} -- *${response.StatusCode}*");
