@@ -9,5 +9,6 @@ namespace Toggl.Foundation.Sync
         IObservable<SyncState> SyncCompleteObservable { get; }
 
         void Start(SyncState state);
+        void Freeze();
     }
 }

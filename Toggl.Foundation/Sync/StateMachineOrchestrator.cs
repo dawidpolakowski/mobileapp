@@ -50,6 +50,9 @@ namespace Toggl.Foundation.Sync
             }
         }
 
+        public void Freeze()
+            => stateMachine.Freeze();
+
         private void onStateEvent(StateMachineEvent @event)
         {
             if (@event is StateMachineDeadEnd || @event is StateMachineError)
