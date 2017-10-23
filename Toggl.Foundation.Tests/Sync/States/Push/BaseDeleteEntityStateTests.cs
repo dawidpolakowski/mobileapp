@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using System.Reactive;
 using System.Reactive.Linq;
 using FluentAssertions;
@@ -9,6 +10,7 @@ using Toggl.Multivac.Models;
 using Toggl.PrimeRadiant;
 using Toggl.Ultrawave;
 using Toggl.Ultrawave.Exceptions;
+using Toggl.Ultrawave.Network;
 using Xunit;
 
 namespace Toggl.Foundation.Tests.Sync.States
@@ -59,26 +61,30 @@ namespace Toggl.Foundation.Tests.Sync.States
         public static object[] ClientExceptions()
             => new[]
             {
-                new object[] { new BadRequestException() },
-                new object[] { new UnauthorizedException() },
-                new object[] { new PaymentRequiredException() },
-                new object[] { new ForbiddenException() },
-                new object[] { new NotFoundException() },
-                new object[] { new ApiDeprecatedException() },
-                new object[] { new RequestEntityTooLargeException() },
-                new object[] { new ClientDeprecatedException() },
-                new object[] { new TooManyRequestsException() }
+                new object[] { new BadRequestException(request, response) },
+                new object[] { new UnauthorizedException(request, response) },
+                new object[] { new PaymentRequiredException(request, response) },
+                new object[] { new ForbiddenException(request, response) },
+                new object[] { new NotFoundException(request, response) },
+                new object[] { new ApiDeprecatedException(request, response) },
+                new object[] { new RequestEntityTooLargeException(request, response) },
+                new object[] { new ClientDeprecatedException(request, response) },
+                new object[] { new TooManyRequestsException(request, response) }
             };
 
         public static object[] ServerExceptions()
             => new[]
             {
-                new object[] { new InternalServerErrorException() },
-                new object[] { new BadGatewayException() },
-                new object[] { new GatewayTimeoutException() },
-                new object[] { new HttpVersionNotSupportedException() },
-                new object[] { new ServiceUnavailableException() }
+                new object[] { new InternalServerErrorException(request, response) },
+                new object[] { new BadGatewayException(request, response) },
+                new object[] { new GatewayTimeoutException(request, response) },
+                new object[] { new HttpVersionNotSupportedException(request, response) },
+                new object[] { new ServiceUnavailableException(request, response) }
             };
+
+        private static IRequest request => new Request("", new Uri("https://what.ever"), new HttpHeader[0], HttpMethod.Get);
+
+        private static IResponse response => new Response("", false, "application/json", System.Net.HttpStatusCode.Forbidden);
 
         public interface IStartMethodTestHelper
         {

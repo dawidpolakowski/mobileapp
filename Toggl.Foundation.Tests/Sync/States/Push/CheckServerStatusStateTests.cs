@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using System.Reactive;
 using System.Reactive.Linq;
 using FluentAssertions;
@@ -9,6 +10,7 @@ using Toggl.Foundation.Sync;
 using Toggl.Foundation.Sync.States.Push;
 using Toggl.Ultrawave;
 using Toggl.Ultrawave.Exceptions;
+using Toggl.Ultrawave.Network;
 using Xunit;
 
 namespace Toggl.Foundation.Tests.Sync.States.Push
@@ -106,7 +108,7 @@ namespace Toggl.Foundation.Tests.Sync.States.Push
         [Fact]
         public void DelaysTheTransitionAtMostByTheNextSlowDelayTimeFromTheRetryDelayServiceWhenInternalServerErrorOccurs()
         {
-            api.Status.IsAvailable().Returns(Observable.Throw<Unit>(new InternalServerErrorException()));
+            api.Status.IsAvailable().Returns(Observable.Throw<Unit>(new InternalServerErrorException(request, response)));
             apiDelay.NextFastDelay().Returns(TimeSpan.FromSeconds(100));
             apiDelay.NextSlowDelay().Returns(TimeSpan.FromSeconds(10));
             var hasCompleted = false;
@@ -122,7 +124,7 @@ namespace Toggl.Foundation.Tests.Sync.States.Push
         [Fact]
         public void DelaysTheTransitionAtLeastByTheNextSlowDelayTimeFromTheRetryDelayServiceWhenInternalServerErrorOccurs()
         {
-            api.Status.IsAvailable().Returns(Observable.Throw<Unit>(new InternalServerErrorException()));
+            api.Status.IsAvailable().Returns(Observable.Throw<Unit>(new InternalServerErrorException(request, response)));
             statusDelay.NextFastDelay().Returns(TimeSpan.FromSeconds(1));
             statusDelay.NextSlowDelay().Returns(TimeSpan.FromSeconds(10));
             var hasCompleted = false;
@@ -172,10 +174,14 @@ namespace Toggl.Foundation.Tests.Sync.States.Push
         public static object[] ServerExceptionsOtherThanInternalServerErrorException()
             => new[]
             {
-                new object[] { new BadGatewayException() },
-                new object[] { new GatewayTimeoutException() },
-                new object[] { new HttpVersionNotSupportedException() },
-                new object[] { new ServiceUnavailableException() }
+                new object[] { new BadGatewayException(request, response) },
+                new object[] { new GatewayTimeoutException(request, response) },
+                new object[] { new HttpVersionNotSupportedException(request, response) },
+                new object[] { new ServiceUnavailableException(request, response) }
             };
+
+        private static IRequest request => new Request("", new Uri("https://what.ever"), new HttpHeader[0], HttpMethod.Get);
+
+        private static IResponse response => new Response("", false, "application/json", System.Net.HttpStatusCode.Forbidden);
     }
 }

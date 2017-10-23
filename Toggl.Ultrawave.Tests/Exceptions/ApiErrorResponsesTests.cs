@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using FluentAssertions;
 using Toggl.Ultrawave.Exceptions;
 using Toggl.Ultrawave.Helpers;
@@ -20,9 +21,10 @@ namespace Toggl.Ultrawave.Tests.Exceptions
             [MemberData(nameof(ClientErrorsList), MemberType = typeof(ApiErrorResponsesTests))]
             public void ReturnsClientErrorException(HttpStatusCode httpStatusCode, Type expectedExceptionType)
             {
+                var request = createRequest(HttpMethod.Get);
                 var response = createErrorResponse(httpStatusCode);
 
-                var exception = ApiExceptions.ForResponse(response);
+                var exception = ApiExceptions.For(request, response);
 
                 exception.Should().BeAssignableTo<ClientErrorException>().And.BeOfType(expectedExceptionType);
             }
@@ -34,9 +36,10 @@ namespace Toggl.Ultrawave.Tests.Exceptions
             [MemberData(nameof(ServerErrorsList), MemberType = typeof(ApiErrorResponsesTests))]
             public void ReturnsServerErrorException(HttpStatusCode httpStatusCode, Type expectedExceptionType)
             {
+                var request = createRequest(HttpMethod.Get);
                 var response = createErrorResponse(httpStatusCode);
 
-                var exception = ApiExceptions.ForResponse(response);
+                var exception = ApiExceptions.For(request, response);
 
                 exception.Should().BeAssignableTo<ServerErrorException>().And.BeOfType(expectedExceptionType);
             }
@@ -48,14 +51,18 @@ namespace Toggl.Ultrawave.Tests.Exceptions
             [MemberData(nameof(UnknownErrorsList), MemberType = typeof(ApiErrorResponsesTests))]
             public void ReturnsUnknownApiError(HttpStatusCode httpStatusCode)
             {
+                var request = createRequest(HttpMethod.Get);
                 var response = createErrorResponse(httpStatusCode);
 
-                var exception = ApiExceptions.ForResponse(response);
+                var exception = ApiExceptions.For(request, response);
 
                 exception.Should().BeOfType<UnknownApiErrorException>()
                     .Which.HttpCode.Should().Equals(httpStatusCode);
             }
         }
+
+        private static Request createRequest(HttpMethod method)
+            => new Request("{\"a\":123}", new Uri("https://integration.tests"), new[] { new HttpHeader("X", "Y") }, method);
 
         private static Response createErrorResponse(HttpStatusCode code, string rawData = "")
             => new Response(rawData, false, "application/json", code);
