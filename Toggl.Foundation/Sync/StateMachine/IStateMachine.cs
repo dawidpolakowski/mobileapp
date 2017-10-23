@@ -6,5 +6,6 @@ namespace Toggl.Foundation.Sync
     {
         IObservable<StateMachineEvent> StateTransitions { get; }
         void Start(ITransition transition);
+        void Freeze();
     }
 }

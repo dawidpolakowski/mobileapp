@@ -17,6 +17,7 @@ namespace Toggl.Foundation.Sync
         private readonly IScheduler scheduler;
 
         private bool isRunning;
+        private bool isFrozen;
 
         public StateMachine(ITransitionHandlerProvider transitionHandlerProvider, IScheduler scheduler)
         {
@@ -27,6 +28,7 @@ namespace Toggl.Foundation.Sync
             this.scheduler = scheduler;
 
             StateTransitions = stateTransitions.AsObservable();
+            isFrozen = false;
         }
 
         public void Start(ITransition transition)
@@ -38,6 +40,11 @@ namespace Toggl.Foundation.Sync
 
             isRunning = true;
             onTransition(transition);
+        }
+
+        public void Freeze()
+        {
+            isFrozen = true;
         }
 
         private void performTransition(ITransition transition, TransitionHandler transitionHandler)
@@ -54,7 +61,7 @@ namespace Toggl.Foundation.Sync
         {
             var transitionHandler = transitionHandlerProvider.GetTransitionHandler(transition.Result);
 
-            if (transitionHandler == null)
+            if (transitionHandler == null || isFrozen == true)
             {
                 isRunning = false;
                 reachDeadEnd(transition);
