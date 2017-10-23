@@ -34,7 +34,7 @@ namespace Toggl.Ultrawave.ApiClients
                     }
                     else
                     {
-                        var error = ApiExceptions.ForResponse(response);
+                        var error = ApiExceptions.For(request, response);
                         observer.OnError(error);
                     }
                 }

@@ -75,12 +75,12 @@ namespace Toggl.Ultrawave.ApiClients
                     }
                     catch
                     {
-                        observer.OnError(new DeserializationException<T>(response.RawData));
+                        observer.OnError(new DeserializationException<T>(request, response, response.RawData));
                     }
                 }
                 else
                 {
-                    var exception = ApiExceptions.ForResponse(response);
+                    var exception = ApiExceptions.For(request, response);
                     observer.OnError(exception);
                 }
             });
