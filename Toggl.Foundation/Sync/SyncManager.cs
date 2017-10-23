@@ -12,6 +12,8 @@ namespace Toggl.Foundation.Sync
         private readonly ISyncStateQueue queue;
         private readonly IStateMachineOrchestrator orchestrator;
 
+        private bool isFrozen;
+
         public bool IsRunningSync { get; private set; }
 
         public SyncState State => orchestrator.State;
@@ -26,6 +28,7 @@ namespace Toggl.Foundation.Sync
             this.orchestrator = orchestrator;
             
             orchestrator.SyncCompleteObservable.Subscribe(syncOperationCompleted);
+            isFrozen = false;
         }
 
         public IObservable<SyncState> PushSync()
@@ -43,6 +46,22 @@ namespace Toggl.Foundation.Sync
             {
                 queue.QueuePullSync();
                 return startSyncIfNeededAndObserve();
+            }
+        }
+
+        public IObservable<SyncState> Freeze()
+        {
+            lock (stateLock)
+            {
+                if (isFrozen == false)
+                {
+                    isFrozen = true;
+                    orchestrator.Freeze();
+                }
+
+                return IsRunningSync
+                    ? syncStatesUntilAndIncludingSleep().LastAsync()
+                    : Observable.Return(Sleep);
             }
         }
 
@@ -64,7 +83,7 @@ namespace Toggl.Foundation.Sync
 
         private void startSyncIfNeeded()
         {
-            if (IsRunningSync) return;
+            if (IsRunningSync || isFrozen) return;
 
             var state = queue.Dequeue();
             IsRunningSync = state != Sleep;
