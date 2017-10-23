@@ -262,6 +262,17 @@ namespace Toggl.Foundation.Tests.Sync
                 }
             }
         }
+
+        public sealed class TheFreezeMethod : StateMachineOrchestratorBaseTests
+        {
+            [Fact]
+            public void ShouldCallFreezeOnTheStateMachine()
+            {
+                Orchestrator.Freeze();
+
+                StateMachine.Received().Freeze();
+            }
+        }
     }
 
     internal static class StateMachineOrchestratorTestExtensions
