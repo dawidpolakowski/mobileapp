@@ -15,7 +15,8 @@ private Action Test(string testFiles)
 {
     var testSettings = new XUnit2Settings
     {
-        Parallelism = ParallelismOption.All,
+        // Parallelism = ParallelismOption.All,
+        Parallelism = ParallelismOption.None,
         HtmlReport = true,
         NoAppDomain = true,
         OutputDirectory = "./bin"

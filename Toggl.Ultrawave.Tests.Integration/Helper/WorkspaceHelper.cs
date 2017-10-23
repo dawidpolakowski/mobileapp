@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Toggl.Multivac.Models;
+using Toggl.Ultrawave.ApiClients;
 using Toggl.Ultrawave.Models;
 using Toggl.Ultrawave.Network;
 using Toggl.Ultrawave.Serialization;
@@ -18,6 +19,7 @@ namespace Toggl.Ultrawave.Tests.Integration.Helper
     {
         public static async Task<Workspace> CreateFor(IUser user)
         {
+            BaseApi.ConsoleWriteLine = Console.WriteLine;
             var newWorkspaceName = $"{Guid.NewGuid()}";
             var json = $"{{\"name\": \"{newWorkspaceName}\"}}";
 
@@ -29,6 +31,7 @@ namespace Toggl.Ultrawave.Tests.Integration.Helper
 
         public static async Task SetSubscription(IUser user, long workspaceId, PricingPlans plan)
         {
+            BaseApi.ConsoleWriteLine = Console.WriteLine;
             var json = $"{{\"pricing_plan_id\":{(int)plan}}}";
 
             await makeRequest($"https://toggl.space/api/v9/workspaces/{workspaceId}/subscriptions", HttpMethod.Post, user, json);
@@ -36,6 +39,7 @@ namespace Toggl.Ultrawave.Tests.Integration.Helper
 
         public static async Task<List<int>> GetAllAvailablePricingPlans(IUser user)
         {
+            BaseApi.ConsoleWriteLine = Console.WriteLine;
             var response = await makeRequest($"https://toggl.space/api/v9/workspaces/{user.DefaultWorkspaceId}/plans", HttpMethod.Get, user, null);
             var matches = Regex.Matches(response, "\\\"pricing_plan_id\\\":\\s*(?<id>\\d+),");
             return matches.Cast<Match>().SelectMany(match => match.Groups["id"].Captures.Cast<Capture>().Select(capture => int.Parse(capture.Value))).ToList();

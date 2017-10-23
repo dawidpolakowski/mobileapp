@@ -17,6 +17,8 @@ namespace Toggl.Ultrawave.ApiClients
         private readonly IApiClient apiClient;
         private readonly IJsonSerializer serializer;
 
+        public static Action<string> ConsoleWriteLine;
+
         protected HttpHeader AuthHeader { get; }
 
         protected BaseApi(IApiClient apiClient, IJsonSerializer serializer, Credentials credentials)
@@ -62,27 +64,34 @@ namespace Toggl.Ultrawave.ApiClients
             var request = new Request(body, endpoint.Url, headers, endpoint.Method);
             return Observable.Create<T>(async observer =>
             {
+                ConsoleWriteLine($"1: send request: [${endpoint.Method}] ${endpoint.Url}");
                 var response = await apiClient.Send(request).ConfigureAwait(false);
+                ConsoleWriteLine($"2: receive response: [${endpoint.Method}] ${endpoint.Url} -- *${response.StatusCode}*");
                 if (response.IsSuccess)
                 {
                     try
                     {
+                        ConsoleWriteLine($"3: response was successful: [${endpoint.Method}] ${endpoint.Url}");
                         var data = !string.IsNullOrEmpty(response.RawData)
                             ? await Task.Run(() => serializer.Deserialize<T>(response.RawData)).ConfigureAwait(false)
                             : default(T);
+                        ConsoleWriteLine($"4: response deserialized: [${endpoint.Method}] ${endpoint.Url}");
                         observer.OnNext(data);
                         observer.OnCompleted();
                     }
                     catch
                     {
+                        ConsoleWriteLine($"?: deserialization failed: [${endpoint.Method}] ${endpoint.Url}");
                         observer.OnError(new DeserializationException<T>(response.RawData));
                     }
                 }
                 else
                 {
+                    ConsoleWriteLine($"3: request was not succeessful: [${endpoint.Method}] ${endpoint.Url}");
                     var exception = ApiExceptions.ForResponse(response);
                     observer.OnError(exception);
                 }
+                ConsoleWriteLine($"9: exit method: [${endpoint.Method}] ${endpoint.Url}");
             });
         }
     }
