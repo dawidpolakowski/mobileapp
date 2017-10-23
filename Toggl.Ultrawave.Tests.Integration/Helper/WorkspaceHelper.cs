@@ -17,6 +17,8 @@ namespace Toggl.Ultrawave.Tests.Integration.Helper
 {
     internal static class WorkspaceHelper
     {
+        public static Action<string> ConsoleWriteLine;
+
         public static async Task<Workspace> CreateFor(IUser user)
         {
             BaseApi.ConsoleWriteLine = Console.WriteLine;
@@ -26,7 +28,9 @@ namespace Toggl.Ultrawave.Tests.Integration.Helper
             var responseBody = await makeRequest("https://toggl.space/api/v9/workspaces", HttpMethod.Post, user, json);
 
             var jsonSerializer = new JsonSerializer();
-            return jsonSerializer.Deserialize<Workspace>(responseBody);
+            var deserialized = jsonSerializer.Deserialize<Workspace>(responseBody);
+            Console.WriteLine($"WH3: response deserialization: CreateFor");
+            return deserialized;
         }
 
         public static async Task SetSubscription(IUser user, long workspaceId, PricingPlans plan)
@@ -34,13 +38,15 @@ namespace Toggl.Ultrawave.Tests.Integration.Helper
             BaseApi.ConsoleWriteLine = Console.WriteLine;
             var json = $"{{\"pricing_plan_id\":{(int)plan}}}";
 
-            await makeRequest($"https://toggl.space/api/v9/workspaces/{workspaceId}/subscriptions", HttpMethod.Post, user, json);
+            var result = await makeRequest($"https://toggl.space/api/v9/workspaces/{workspaceId}/subscriptions", HttpMethod.Post, user, json);
+            Console.WriteLine($"WH3: got response: SetSubscription");
         }
 
         public static async Task<List<int>> GetAllAvailablePricingPlans(IUser user)
         {
             BaseApi.ConsoleWriteLine = Console.WriteLine;
             var response = await makeRequest($"https://toggl.space/api/v9/workspaces/{user.DefaultWorkspaceId}/plans", HttpMethod.Get, user, null);
+            Console.WriteLine($"WH3: got response: GetAllAvailablePricingPlans");
             var matches = Regex.Matches(response, "\\\"pricing_plan_id\\\":\\s*(?<id>\\d+),");
             return matches.Cast<Match>().SelectMany(match => match.Groups["id"].Captures.Cast<Capture>().Select(capture => int.Parse(capture.Value))).ToList();
         }
@@ -57,7 +63,9 @@ namespace Toggl.Ultrawave.Tests.Integration.Helper
 
             using (var client = new HttpClient())
             {
+                Console.WriteLine($"WH1: send request: [${method}] ${endpoint}");
                 var response = await client.SendAsync(requestMessage);
+                Console.WriteLine($"WH2: received response: [${method}] ${endpoint} -- *${response.StatusCode}*");
                 return await response.Content.ReadAsStringAsync();
             }
         }
