@@ -15,7 +15,7 @@ namespace Toggl.Ultrawave.Tests.Integration
         {
             var methodName = toSentenceCase(methodUnderTest.Name);
             formattedTestName = getFormattedName(methodUnderTest.ReflectedType, methodName);
-            Console.WriteLine(formattedTestName.Replace("`1", ""));
+            Console.WriteLine("[START TEST]: {0}", formattedTestName.Replace("`1", ""));
 
             stopwatch.Start();
         }
@@ -23,7 +23,7 @@ namespace Toggl.Ultrawave.Tests.Integration
         public override void After(MethodInfo methodUnderTest)
         {
             stopwatch.Stop();
-            Console.WriteLine($"{formattedTestName} ended after: {stopwatch.Elapsed}");
+            Console.WriteLine($"[END TEST]: {formattedTestName} ended after: {stopwatch.Elapsed}");
         }
 
         private string getFormattedName(Type typeInfo, string accumulator)
