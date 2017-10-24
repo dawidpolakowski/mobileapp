@@ -30,8 +30,8 @@ namespace Toggl.Daneel.Presentation.Transition
 
         public override void DismissalTransitionWillBegin()
         {
-            var transitionCoordinaotr = PresentingViewController.GetTransitionCoordinator();
-            transitionCoordinaotr.AnimateAlongsideTransition(context => dimmingView.Alpha = 0.0f, null);   
+            var transitionCoordinator = PresentingViewController.GetTransitionCoordinator();
+            transitionCoordinator.AnimateAlongsideTransition(context => dimmingView.Alpha = 0.0f, null);   
         }
 
         public override void ContainerViewWillLayoutSubviews()
