@@ -83,9 +83,9 @@ namespace Toggl.Foundation.Sync
 
         private void startSyncIfNeeded()
         {
-            if (IsRunningSync || isFrozen) return;
+            if (IsRunningSync) return;
 
-            var state = queue.Dequeue();
+            var state = isFrozen ? Sleep : queue.Dequeue();
             IsRunningSync = state != Sleep;
             orchestrator.Start(state);
         }
