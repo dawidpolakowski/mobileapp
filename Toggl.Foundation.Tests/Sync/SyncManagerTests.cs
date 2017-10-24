@@ -451,8 +451,6 @@ namespace Toggl.Foundation.Tests.Sync
                 SyncManager.IsRunningSync.Should().BeFalse();
                 finished.Should().BeTrue();
             }
-
-            // test for thread safety
         }
     }
 }
