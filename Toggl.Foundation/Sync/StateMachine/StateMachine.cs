@@ -38,6 +38,9 @@ namespace Toggl.Foundation.Sync
             if (isRunning)
                 throw new InvalidOperationException("Cannot start state machine if it is already running.");
 
+            if (isFrozen)
+                throw new InvalidOperationException("Cannot start state machine again if it was frozen.");
+
             isRunning = true;
             onTransition(transition);
         }
