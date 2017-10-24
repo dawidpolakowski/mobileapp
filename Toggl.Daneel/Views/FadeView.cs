@@ -7,7 +7,7 @@ using UIKit;
 namespace Toggl.Daneel.Views
 {
     [Register(nameof(FadeView))]
-    public class FadeView : UIView
+    public sealed class FadeView : UIView
     {
         public nfloat FadeWidth { get; set; } = 8;
 
