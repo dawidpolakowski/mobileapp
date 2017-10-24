@@ -374,15 +374,83 @@ namespace Toggl.Foundation.Tests.Sync
                 firstState.Should().Be(Sleep);
             }
 
-            // test for running push sync after freezing
+            [Fact]
+            public void RunningPushSyncOnFrozenSyncManagerGoesDirectlyToSleepState()
+            {
+                SyncManager.Freeze();
+                
+                SyncManager.PushSync();
 
-            // test for trying full sync after freezing
+                Orchestrator.Received().Start(Arg.Is(Sleep));
+            }
 
-            // test that the observable does not complete when some non-sleep states are emitted
+            [Fact]
+            public void RunningFullSyncOnFrozenSyncManagerGoesDirectlyToSleepState()
+            {
+                SyncManager.Freeze();
 
-            // test for completing when the the Sleep state arrives
+                SyncManager.ForceFullSync();
 
-            // ???
+                Orchestrator.Received().Start(Arg.Is(Sleep));
+            }
+
+            [Fact]
+            public void KeepsWaitingWhileNoSleepStateOccursAfterFullSync()
+            {
+                bool finished = false;
+                Queue.Dequeue().Returns(Pull);
+                SyncManager.ForceFullSync();
+
+                var observable = SyncManager.Freeze().Subscribe(_ => finished = true);
+                OrchestratorStates.OnNext(Pull);
+                OrchestratorStates.OnNext(Push);
+
+                SyncManager.IsRunningSync.Should().BeTrue();
+                finished.Should().BeFalse();
+            }
+
+            [Fact]
+            public void KeepsWaitingWhileNoSleepStateOccursAfterPushSync()
+            {
+                bool finished = false;
+                Queue.Dequeue().Returns(Push);
+                SyncManager.PushSync();
+
+                var observable = SyncManager.Freeze().Subscribe(_ => finished = true);
+                OrchestratorStates.OnNext(Push);
+
+                SyncManager.IsRunningSync.Should().BeTrue();
+                finished.Should().BeFalse();
+            }
+
+            [Fact]
+            public void CompletesWhenSleepStateOccursAfterFullSync()
+            {
+                bool finished = false;
+                SyncManager.ForceFullSync();
+
+                var observable = SyncManager.Freeze().Subscribe(_ => finished = true);
+                OrchestratorStates.OnNext(Pull);
+                OrchestratorStates.OnNext(Push);
+                OrchestratorStates.OnNext(Sleep);
+
+                SyncManager.IsRunningSync.Should().BeFalse();
+                finished.Should().BeTrue();
+            }
+
+            [Fact]
+            public void CompletesWhenSleepStateOccursAfterPushSync()
+            {
+                bool finished = false;
+                SyncManager.PushSync();
+
+                var observable = SyncManager.Freeze().Subscribe(_ => finished = true);
+                OrchestratorStates.OnNext(Push);
+                OrchestratorStates.OnNext(Sleep);
+
+                SyncManager.IsRunningSync.Should().BeFalse();
+                finished.Should().BeTrue();
+            }
 
             // test for thread safety
         }
