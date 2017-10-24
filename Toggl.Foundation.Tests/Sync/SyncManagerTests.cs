@@ -338,5 +338,53 @@ namespace Toggl.Foundation.Tests.Sync
                 });
             }
         }
+
+        public sealed class TheFreezeMethod : SyncManagerTestBase
+        {
+            [Fact]
+            public void DoesNotThrowWhenFreezingAFrozenSyncManager()
+            {
+                SyncManager.Freeze();
+
+                Action freezing = () => SyncManager.Freeze();
+
+                freezing.ShouldNotThrow();
+            }
+
+            [Fact]
+            public void FreezingAFrozenSyncManagerImmediatellyReturnsSleep()
+            {
+                SyncState? firstState = null;
+                SyncManager.Freeze();
+
+                var observable = SyncManager.Freeze();
+                var subscription = observable.Subscribe(state => firstState = state);
+
+                firstState.Should().Be(Sleep);
+            }
+
+            [Fact]
+            public void FreezingSyncManagerWhenNoSyncIsRunningImmediatellyReturnsSleep()
+            {
+                SyncState? firstState = null;
+
+                var observable = SyncManager.Freeze();
+                var subscription = observable.Subscribe(state => firstState = state);
+
+                firstState.Should().Be(Sleep);
+            }
+
+            // test for running push sync after freezing
+
+            // test for trying full sync after freezing
+
+            // test that the observable does not complete when some non-sleep states are emitted
+
+            // test for completing when the the Sleep state arrives
+
+            // ???
+
+            // test for thread safety
+        }
     }
 }
