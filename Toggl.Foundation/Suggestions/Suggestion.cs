@@ -16,6 +16,8 @@ namespace Toggl.Foundation.Suggestions
 
         public string TaskName { get; } = "";
 
+        public string ClientName { get; } = "";
+
         public bool HasProject { get; } = false;
 
         public long WorkspaceId { get; }
@@ -32,6 +34,8 @@ namespace Toggl.Foundation.Suggestions
             HasProject = true;
             ProjectName = timeEntry.Project.Name;
             ProjectColor = timeEntry.Project.Color;
+
+            ClientName = timeEntry.Project.Client?.Name ?? "";
 
             if (timeEntry.Task == null) return;
 

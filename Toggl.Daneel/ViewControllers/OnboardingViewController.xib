@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12121" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_0" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13174"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -131,6 +130,60 @@ START TRACKING</string>
                         </mask>
                     </variation>
                 </view>
+                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3BO-Ic-74A">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4cy-rr-Z3l">
+                            <rect key="frame" x="0.0" y="0.0" width="1280" height="568"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0bW-s1-SME" userLabel="FirstPageLabel">
+                                    <rect key="frame" x="0.0" y="500" width="320" height="0.0"/>
+                                    <accessibility key="accessibilityConfiguration" label="OnboardingFirstLabel"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Meo-nQ-q5D" userLabel="SecondPageLabel">
+                                    <rect key="frame" x="320" y="500" width="320" height="0.0"/>
+                                    <accessibility key="accessibilityConfiguration" label="OnboardingSecondLabel"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="G9v-ES-Yia" userLabel="ThirdPageLabel">
+                                    <rect key="frame" x="640" y="500" width="320" height="0.0"/>
+                                    <accessibility key="accessibilityConfiguration" label="OnboardingThirdLabel"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                            </subviews>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            <constraints>
+                                <constraint firstAttribute="bottom" secondItem="G9v-ES-Yia" secondAttribute="bottom" constant="68" id="6Pq-Bs-4jm"/>
+                                <constraint firstAttribute="bottom" secondItem="0bW-s1-SME" secondAttribute="bottom" constant="68" id="PXB-XK-YzZ"/>
+                                <constraint firstAttribute="bottom" secondItem="Meo-nQ-q5D" secondAttribute="bottom" constant="68" id="Tvy-Ce-Tc5"/>
+                                <constraint firstItem="G9v-ES-Yia" firstAttribute="leading" secondItem="Meo-nQ-q5D" secondAttribute="trailing" id="XxN-OB-QTE"/>
+                                <constraint firstItem="0bW-s1-SME" firstAttribute="leading" secondItem="4cy-rr-Z3l" secondAttribute="leading" id="Y3I-fH-RcE"/>
+                                <constraint firstItem="Meo-nQ-q5D" firstAttribute="leading" secondItem="0bW-s1-SME" secondAttribute="trailing" id="qsG-hh-3qi"/>
+                            </constraints>
+                        </view>
+                    </subviews>
+                    <constraints>
+                        <constraint firstItem="4cy-rr-Z3l" firstAttribute="width" secondItem="3BO-Ic-74A" secondAttribute="width" multiplier="4" id="1ri-y0-6pc"/>
+                        <constraint firstItem="4cy-rr-Z3l" firstAttribute="height" secondItem="3BO-Ic-74A" secondAttribute="height" id="7SC-Py-XIU"/>
+                        <constraint firstItem="Meo-nQ-q5D" firstAttribute="width" secondItem="3BO-Ic-74A" secondAttribute="width" id="FfT-8g-USB"/>
+                        <constraint firstItem="G9v-ES-Yia" firstAttribute="width" secondItem="3BO-Ic-74A" secondAttribute="width" id="MFC-GR-N6M"/>
+                        <constraint firstItem="0bW-s1-SME" firstAttribute="width" secondItem="3BO-Ic-74A" secondAttribute="width" id="SyZ-EE-Mia"/>
+                        <constraint firstItem="4cy-rr-Z3l" firstAttribute="top" secondItem="3BO-Ic-74A" secondAttribute="top" id="XlS-BF-Kqb"/>
+                        <constraint firstAttribute="trailing" secondItem="4cy-rr-Z3l" secondAttribute="trailing" id="YIh-BM-dFW"/>
+                        <constraint firstItem="4cy-rr-Z3l" firstAttribute="leading" secondItem="3BO-Ic-74A" secondAttribute="leading" id="nR4-Hr-h04"/>
+                        <constraint firstAttribute="bottom" secondItem="4cy-rr-Z3l" secondAttribute="bottom" id="nr7-hF-7Ya"/>
+                    </constraints>
+                </scrollView>
+                <pageControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="KBd-Lu-7wr">
+                    <rect key="frame" x="140.5" y="507" width="39" height="37"/>
+                </pageControl>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1ic-Bm-3e0">
                     <rect key="frame" x="258" y="0.0" width="62" height="58"/>
                     <accessibility key="accessibilityConfiguration" label="OnboardingSkip"/>
@@ -167,76 +220,18 @@ START TRACKING</string>
                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
                 </button>
-                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3BO-Ic-74A">
-                    <rect key="frame" x="0.0" y="452" width="320" height="60"/>
-                    <subviews>
-                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4cy-rr-Z3l">
-                            <rect key="frame" x="0.0" y="0.0" width="1280" height="60"/>
-                            <subviews>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0bW-s1-SME" userLabel="FirstPageLabel">
-                                    <rect key="frame" x="0.0" y="0.0" width="320" height="60"/>
-                                    <accessibility key="accessibilityConfiguration" label="OnboardingFirstLabel"/>
-                                    <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    <nil key="highlightedColor"/>
-                                </label>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Meo-nQ-q5D" userLabel="SecondPageLabel">
-                                    <rect key="frame" x="320" y="0.0" width="320" height="60"/>
-                                    <accessibility key="accessibilityConfiguration" label="OnboardingSecondLabel"/>
-                                    <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    <nil key="highlightedColor"/>
-                                </label>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="G9v-ES-Yia" userLabel="ThirdPageLabel">
-                                    <rect key="frame" x="640" y="-0.5" width="320" height="60"/>
-                                    <accessibility key="accessibilityConfiguration" label="OnboardingThirdLabel"/>
-                                    <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    <nil key="highlightedColor"/>
-                                </label>
-                            </subviews>
-                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                            <constraints>
-                                <constraint firstItem="0bW-s1-SME" firstAttribute="height" secondItem="4cy-rr-Z3l" secondAttribute="height" id="8UL-69-6CT"/>
-                                <constraint firstItem="G9v-ES-Yia" firstAttribute="height" secondItem="4cy-rr-Z3l" secondAttribute="height" id="FRZ-IP-FTA"/>
-                                <constraint firstItem="G9v-ES-Yia" firstAttribute="leading" secondItem="Meo-nQ-q5D" secondAttribute="trailing" id="XxN-OB-QTE"/>
-                                <constraint firstItem="0bW-s1-SME" firstAttribute="leading" secondItem="4cy-rr-Z3l" secondAttribute="leading" id="Y3I-fH-RcE"/>
-                                <constraint firstItem="Meo-nQ-q5D" firstAttribute="height" secondItem="4cy-rr-Z3l" secondAttribute="height" id="YNi-Ee-urF"/>
-                                <constraint firstItem="0bW-s1-SME" firstAttribute="centerY" secondItem="4cy-rr-Z3l" secondAttribute="centerY" id="hIF-qa-ktx"/>
-                                <constraint firstItem="Meo-nQ-q5D" firstAttribute="centerY" secondItem="4cy-rr-Z3l" secondAttribute="centerY" id="ivL-cU-lQC"/>
-                                <constraint firstItem="G9v-ES-Yia" firstAttribute="centerY" secondItem="4cy-rr-Z3l" secondAttribute="centerY" id="p5I-TK-G8k"/>
-                                <constraint firstItem="Meo-nQ-q5D" firstAttribute="leading" secondItem="0bW-s1-SME" secondAttribute="trailing" id="qsG-hh-3qi"/>
-                            </constraints>
-                        </view>
-                    </subviews>
-                    <constraints>
-                        <constraint firstItem="4cy-rr-Z3l" firstAttribute="width" secondItem="3BO-Ic-74A" secondAttribute="width" multiplier="4" id="1ri-y0-6pc"/>
-                        <constraint firstItem="4cy-rr-Z3l" firstAttribute="height" secondItem="3BO-Ic-74A" secondAttribute="height" id="7SC-Py-XIU"/>
-                        <constraint firstItem="Meo-nQ-q5D" firstAttribute="width" secondItem="3BO-Ic-74A" secondAttribute="width" id="FfT-8g-USB"/>
-                        <constraint firstItem="G9v-ES-Yia" firstAttribute="width" secondItem="3BO-Ic-74A" secondAttribute="width" id="MFC-GR-N6M"/>
-                        <constraint firstAttribute="height" constant="60" id="SWJ-fV-y95"/>
-                        <constraint firstItem="0bW-s1-SME" firstAttribute="width" secondItem="3BO-Ic-74A" secondAttribute="width" id="SyZ-EE-Mia"/>
-                        <constraint firstItem="4cy-rr-Z3l" firstAttribute="top" secondItem="3BO-Ic-74A" secondAttribute="top" id="XlS-BF-Kqb"/>
-                        <constraint firstAttribute="trailing" secondItem="4cy-rr-Z3l" secondAttribute="trailing" id="YIh-BM-dFW"/>
-                        <constraint firstItem="4cy-rr-Z3l" firstAttribute="leading" secondItem="3BO-Ic-74A" secondAttribute="leading" id="nR4-Hr-h04"/>
-                        <constraint firstAttribute="bottom" secondItem="4cy-rr-Z3l" secondAttribute="bottom" id="nr7-hF-7Ya"/>
-                    </constraints>
-                </scrollView>
-                <pageControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="KBd-Lu-7wr">
-                    <rect key="frame" x="140.5" y="507" width="39" height="37"/>
-                </pageControl>
             </subviews>
             <color key="backgroundColor" red="0.023529411764705882" green="0.66666666666666663" blue="0.96078431372549022" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
                 <constraint firstAttribute="bottom" secondItem="QOR-SE-Mpp" secondAttribute="bottom" id="0mR-Ja-1lj"/>
                 <constraint firstItem="1ic-Bm-3e0" firstAttribute="top" secondItem="2" secondAttribute="top" id="1No-up-h7o"/>
-                <constraint firstItem="3BO-Ic-74A" firstAttribute="centerX" secondItem="2" secondAttribute="centerX" id="4l2-Fk-umv"/>
                 <constraint firstItem="KBd-Lu-7wr" firstAttribute="centerX" secondItem="2" secondAttribute="centerX" id="8at-kn-IWJ"/>
-                <constraint firstItem="3BO-Ic-74A" firstAttribute="width" secondItem="2" secondAttribute="width" id="DXH-y9-kEW"/>
                 <constraint firstItem="hCB-nj-krh" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="52" id="EJV-EX-9IS"/>
                 <constraint firstItem="hCB-nj-krh" firstAttribute="top" secondItem="2" secondAttribute="top" constant="49" id="IKT-GH-bEe"/>
                 <constraint firstItem="cBN-Dd-JYx" firstAttribute="trailing" secondItem="hCB-nj-krh" secondAttribute="trailing" constant="-13" id="Jny-ou-xWA"/>
                 <constraint firstItem="YG4-AY-v9P" firstAttribute="centerX" secondItem="2" secondAttribute="centerX" id="NQB-7D-vYl"/>
+                <constraint firstItem="3BO-Ic-74A" firstAttribute="leading" secondItem="2" secondAttribute="leading" id="PUe-xm-GKw"/>
+                <constraint firstItem="crr-oI-9sA" firstAttribute="top" secondItem="hCB-nj-krh" secondAttribute="bottom" constant="50" id="Q1S-pS-El3"/>
                 <constraint firstItem="YG4-AY-v9P" firstAttribute="centerY" secondItem="2" secondAttribute="centerY" id="Q4P-tl-HCR"/>
                 <constraint firstAttribute="trailing" secondItem="crr-oI-9sA" secondAttribute="trailing" id="SjV-Vk-J1r"/>
                 <constraint firstAttribute="bottom" secondItem="crr-oI-9sA" secondAttribute="bottom" id="U74-gr-GUw"/>
@@ -244,23 +239,20 @@ START TRACKING</string>
                 <constraint firstItem="KBd-Lu-7wr" firstAttribute="top" secondItem="tAw-Ut-UeB" secondAttribute="bottom" constant="28" id="aJc-Sw-JXX"/>
                 <constraint firstItem="cBN-Dd-JYx" firstAttribute="centerY" secondItem="hCB-nj-krh" secondAttribute="centerY" id="aws-4u-H1V"/>
                 <constraint firstItem="cBN-Dd-JYx" firstAttribute="leading" secondItem="hCB-nj-krh" secondAttribute="leading" constant="13" id="b11-eM-S25"/>
-                <constraint firstItem="3BO-Ic-74A" firstAttribute="top" secondItem="hCB-nj-krh" secondAttribute="bottom" constant="20" id="bBc-dW-JJq"/>
+                <constraint firstAttribute="bottom" secondItem="3BO-Ic-74A" secondAttribute="bottom" id="cdm-Od-rB1"/>
                 <constraint firstItem="YG4-AY-v9P" firstAttribute="height" secondItem="2" secondAttribute="height" id="eAI-J9-UZ2"/>
                 <constraint firstItem="QOR-SE-Mpp" firstAttribute="leading" secondItem="2" secondAttribute="leading" id="ht7-4g-Opq"/>
                 <constraint firstAttribute="trailing" secondItem="hCB-nj-krh" secondAttribute="trailing" constant="52" id="l4y-Al-q5D"/>
-                <constraint firstAttribute="bottom" secondItem="3BO-Ic-74A" secondAttribute="bottom" constant="56" id="nok-6Y-Q1K"/>
                 <constraint firstItem="cBN-Dd-JYx" firstAttribute="top" secondItem="hCB-nj-krh" secondAttribute="top" constant="22" id="r4b-51-ugG"/>
                 <constraint firstItem="cBN-Dd-JYx" firstAttribute="centerX" secondItem="hCB-nj-krh" secondAttribute="centerX" id="rlh-YM-CTY"/>
                 <constraint firstItem="KBd-Lu-7wr" firstAttribute="centerY" secondItem="crr-oI-9sA" secondAttribute="centerY" id="rnk-Pw-fds"/>
+                <constraint firstAttribute="trailing" secondItem="3BO-Ic-74A" secondAttribute="trailing" id="vKM-LW-ljA"/>
                 <constraint firstAttribute="trailing" secondItem="1ic-Bm-3e0" secondAttribute="trailing" id="wNz-bj-mls"/>
+                <constraint firstItem="3BO-Ic-74A" firstAttribute="top" secondItem="2" secondAttribute="top" id="wbU-bE-L7r"/>
                 <constraint firstItem="YG4-AY-v9P" firstAttribute="width" secondItem="2" secondAttribute="width" id="xVd-pQ-bnU"/>
             </constraints>
             <point key="canvasLocation" x="137.5" y="53.5"/>
         </view>
-        <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" id="ydh-EF-3Ka">
-            <rect key="frame" x="0.0" y="0.0" width="20" height="20"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-        </activityIndicatorView>
     </objects>
     <resources>
         <image name="notebook" width="95" height="85"/>

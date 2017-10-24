@@ -74,5 +74,10 @@ namespace Toggl.Foundation.MvvmCross.Helper
         {
             public static readonly MvxColor BackgroundOverlay = new MvxColor(181, 188, 192);
         }
+
+        public static class Suggestions
+        {
+            public static readonly MvxColor ClientColor = new MvxColor(163, 163, 163);
+        }
     }
 }

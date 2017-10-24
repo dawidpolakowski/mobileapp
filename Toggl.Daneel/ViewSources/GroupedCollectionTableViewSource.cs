@@ -6,6 +6,7 @@ using MvvmCross.Binding.ExtensionMethods;
 using MvvmCross.Binding.iOS.Views;
 using MvvmCross.Core.ViewModels;
 using Toggl.Daneel.Views;
+using Toggl.Daneel.Views.Interfaces;
 using UIKit;
 
 namespace Toggl.Daneel.ViewSources
@@ -34,7 +35,7 @@ namespace Toggl.Daneel.ViewSources
             if (cell is IMvxBindable bindable)
                 bindable.DataContext = grouping;
 
-            if (section == 0 && cell is WorkspaceHeaderViewCell headerCell)
+            if (section == 0 && cell is IHeaderViewCellWithHideableTopSeparator headerCell)
                 headerCell.TopSeparatorHidden = true;
 
             return cell;
@@ -70,7 +71,7 @@ namespace Toggl.Daneel.ViewSources
             var firstVisible = TableView.IndexPathsForVisibleRows.First();
             if (firstVisible.Section != section + 1) return;
 
-            var nextHeader = TableView.GetHeaderView(firstVisible.Section) as WorkspaceHeaderViewCell;
+            var nextHeader = TableView.GetHeaderView(firstVisible.Section) as IHeaderViewCellWithHideableTopSeparator;
             if (nextHeader == null) return;
 
             nextHeader.TopSeparatorHidden = true;
@@ -78,13 +79,13 @@ namespace Toggl.Daneel.ViewSources
 
         public override void WillDisplayHeaderView(UITableView tableView, UIView headerView, nint section)
         {
-            var headerViewCell = headerView as WorkspaceHeaderViewCell;
+            var headerViewCell = headerView as IHeaderViewCellWithHideableTopSeparator;
             if (headerViewCell == null) return;
 
             var firstVisibleIndexPath = TableView.IndexPathsForVisibleRows.First();
             if (firstVisibleIndexPath.Section == section)
             {
-                var nextHeader = TableView.GetHeaderView(section + 1) as WorkspaceHeaderViewCell;
+                var nextHeader = TableView.GetHeaderView(section + 1) as IHeaderViewCellWithHideableTopSeparator;
                 if (nextHeader == null) return;
                 nextHeader.TopSeparatorHidden = false;
                 headerViewCell.TopSeparatorHidden = true;

@@ -3,11 +3,12 @@ using Foundation;
 using MvvmCross.Binding.BindingContext;
 using MvvmCross.Binding.iOS.Views;
 using Toggl.Foundation.MvvmCross.Collections;
+using Toggl.Daneel.Views.Interfaces;
 using UIKit;
 
 namespace Toggl.Daneel.Views
 {
-    public sealed partial class WorkspaceHeaderViewCell : MvxTableViewHeaderFooterView
+    public sealed partial class WorkspaceHeaderViewCell : MvxTableViewHeaderFooterView, IHeaderViewCellWithHideableTopSeparator
     {
         public static readonly NSString Key = new NSString(nameof(WorkspaceHeaderViewCell));
         public static readonly UINib Nib;

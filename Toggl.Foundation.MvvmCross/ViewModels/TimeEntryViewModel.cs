@@ -58,6 +58,8 @@ namespace Toggl.Foundation.MvvmCross.ViewModels
             ProjectName = timeEntry.Project.Name;
             ProjectColor = timeEntry.Project.Color;
 
+            TaskName = timeEntry.Task?.Name ?? "";
+
             ClientName = timeEntry.Project.Client?.Name ?? "";
         }
     }
