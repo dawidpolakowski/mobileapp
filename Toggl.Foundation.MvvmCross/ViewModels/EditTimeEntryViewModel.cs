@@ -255,7 +255,9 @@ namespace Toggl.Foundation.MvvmCross.ViewModels
         private async Task selectTags()
         {
             var tagsToPass = tagIds.ToArray();
-            var returnedTags = await navigationService.Navigate<SelectTagsViewModel, long[], long[]>(tagsToPass);
+            var returnedTags = await navigationService
+                .Navigate<SelectTagsViewModel, (long[], long), long[]>(
+                    (tagsToPass, workspaceId));
 
             if (returnedTags.SequenceEqual(tagsToPass))
                 return;

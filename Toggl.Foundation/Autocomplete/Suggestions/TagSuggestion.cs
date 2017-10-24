@@ -19,6 +19,7 @@ namespace Toggl.Foundation.Autocomplete.Suggestions
             Name = tag.Name;
             WorkspaceId = tag.WorkspaceId;
             WorkspaceName = tag.Workspace.Name;
+            WorkspaceId = tag.WorkspaceId;
         }
 
         public override int GetHashCode()

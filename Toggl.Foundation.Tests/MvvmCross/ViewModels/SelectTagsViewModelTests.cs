@@ -12,6 +12,7 @@ using Toggl.Foundation.MvvmCross.ViewModels;
 using Toggl.Foundation.Tests.Generators;
 using Toggl.PrimeRadiant.Models;
 using Xunit;
+using static Toggl.Multivac.Extensions.FunctionalExtensions;
 
 namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
 {
@@ -22,12 +23,8 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
             protected override SelectTagsViewModel CreateViewModel()
                 => new SelectTagsViewModel(DataSource, NavigationService);
 
-            protected async Task EnsureClosesTheViewModel()
-            {
-                await ViewModel.CloseCommand.ExecuteAsync();
-
-                await NavigationService.Received().Close(Arg.Is(ViewModel), Arg.Any<long[]>());
-            }
+            protected Task EnsureClosesTheViewModel()
+                => NavigationService.Received().Close(Arg.Is(ViewModel), Arg.Any<long[]>());
 
             protected bool EnsureExpectedTagsAreReturned(long[] actual, long[] expected)
             {
@@ -62,14 +59,18 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
         public sealed class TheCloseCommand : SelectTagsViewModelTest
         {
             [Fact]
-            public Task ClosesTheViewModel()
-                => EnsureClosesTheViewModel();
+            public async Task ClosesTheViewModel()
+            {
+                await ViewModel.CloseCommand.ExecuteAsync();
+
+                await EnsureClosesTheViewModel();
+            }
 
             [Fact]
             public async Task ReturnsTheSameTagsThatWerePassedToTheViewModel()
             {
                 var tagids = new long[] { 1, 4, 29, 2 };
-                ViewModel.Prepare(tagids);
+                ViewModel.Prepare((tagids, 0));
 
                 await ViewModel.CloseCommand.ExecuteAsync();
 
@@ -82,8 +83,12 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
         public sealed class TheSaveCommand : SelectTagsViewModelTest
         {
             [Fact]
-            public Task ClosesTheViewModel()
-                => EnsureClosesTheViewModel();
+            public async Task ClosesTheViewModel()
+            {
+                await ViewModel.SaveCommand.ExecuteAsync();
+
+                await EnsureClosesTheViewModel();
+            }
 
             [Fact]
             public async Task ReturnsTheSelectedTagIds()
@@ -150,68 +155,77 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
 
         public sealed class TheTagsProperty : SelectTagsViewModelTest
         {
-            private IEnumerable<TagSuggestion> getTagSuggestions(int count, int workspaceId)
+            private IEnumerable<TagSuggestion> getTagSuggestions(int count, IDatabaseWorkspace workspace)
             {
                 for (int i = 0; i < count; i++)
                 {
-                    var workspace = Substitute.For<IDatabaseWorkspace>();
-                    workspace.Name.Returns($"Workspace{workspaceId}");
-                    workspace.Id.Returns(workspaceId);
                     var tag = Substitute.For<IDatabaseTag>();
-                    tag.Name.Returns($"Tag{i}");
+                    var workspaceId = workspace.Id;
+                    tag.WorkspaceId.Returns(workspaceId);
                     tag.Workspace.Returns(workspace);
                     yield return new TagSuggestion(tag);
                 }
             }
 
-            [Fact]
-            public async Task IsPopulatedAfterInitialization()
+            private IDatabaseWorkspace createWorkspace(long id, string name)
             {
-                var tagSuggestions = getTagSuggestions(10, 0);
-                var suggestionsObservable = Observable.Return(tagSuggestions);
-                var autocompleteProvider = Substitute.For<IAutocompleteProvider>();
-                autocompleteProvider.Query(Arg.Any<string>(), Arg.Is(AutocompleteSuggestionType.Tags))
-                    .Returns(suggestionsObservable);
-                DataSource.AutocompleteProvider.Returns(autocompleteProvider);
-
-                await ViewModel.Initialize();
-
-                ViewModel.Tags.Should().HaveCount(1);
-                ViewModel.Tags.First().Should().HaveCount(10);
+                var workspace = Substitute.For<IDatabaseWorkspace>();
+                workspace.Id.Returns(id);
+                workspace.Name.Returns(name);
+                return workspace;
             }
 
             [Fact]
-            public async Task IsGroupedByWorkspace()
+            public async Task OnlyContainsTagsFromTheSameWorkspaceAsTimeEntry()
             {
-                var suggestions = new List<TagSuggestion>();
-                var workspaceIds = new[] { 0, 1, 10, 54 };
-                suggestions.AddRange(getTagSuggestions(3, workspaceIds[0]));
-                suggestions.AddRange(getTagSuggestions(4, workspaceIds[1]));
-                suggestions.AddRange(getTagSuggestions(1, workspaceIds[2]));
-                suggestions.AddRange(getTagSuggestions(10, workspaceIds[3]));
-                var suggestionsObservable = Observable.Return(suggestions);
+                var tags = new List<TagSuggestion>();
+                var workspaces = Enumerable.Range(0, 5)
+                    .Select(i => createWorkspace(i, $"Workspace{i}")).ToArray();
+                workspaces.ForEach(workspace
+                    => tags.AddRange(getTagSuggestions(5, workspace)));
                 var autocompleteProvider = Substitute.For<IAutocompleteProvider>();
-                DataSource.AutocompleteProvider.Returns(autocompleteProvider);
                 autocompleteProvider.Query(Arg.Any<string>(), Arg.Is(AutocompleteSuggestionType.Tags))
-                    .Returns(suggestionsObservable);
+                    .Returns(Observable.Return(tags));
+                DataSource.AutocompleteProvider.Returns(autocompleteProvider);
+                var targetWorkspace = workspaces[1];
+                DataSource.Workspaces.GetById(Arg.Is(targetWorkspace.Id))
+                    .Returns(Observable.Return(targetWorkspace));
+                var tagIds = tags.Select(tag => tag.TagId).ToArray();
 
+                ViewModel.Prepare((tagIds, targetWorkspace.Id));
                 await ViewModel.Initialize();
 
-                ViewModel.Tags.Should().HaveCount(workspaceIds.Length);
-                foreach (var tagGroup in ViewModel.Tags)
-                {
-                    foreach (var tag in tagGroup)
-                    {
-                        tag.Workspace.Should().Be(tagGroup.WorkspaceName);
-                    }
-                }
+                ViewModel.Tags.Should().HaveCount(5);
+                ViewModel.Tags.Should()
+                    .OnlyContain(tag => tag.Workspace == targetWorkspace.Name);
+            }
+
+            [Fact]
+            public async Task IsPopulatedAfterInitialization()
+            {
+                var workspace = createWorkspace(13, "Some workspace");
+                var tagSuggestions = getTagSuggestions(10, workspace);
+                var tagIds = tagSuggestions.Select(tag => tag.TagId).ToArray();
+                var autocompleteProvider = Substitute.For<IAutocompleteProvider>();
+                autocompleteProvider.Query(Arg.Any<string>(), Arg.Is(AutocompleteSuggestionType.Tags))
+                    .Returns(Observable.Return(tagSuggestions));
+                DataSource.AutocompleteProvider.Returns(autocompleteProvider);
+                DataSource.Workspaces.GetById(Arg.Is(workspace.Id))
+                    .Returns(Observable.Return(workspace));
+
+                ViewModel.Prepare((tagIds, workspace.Id));
+                await ViewModel.Initialize();
+
+                ViewModel.Tags.Should().HaveCount(tagSuggestions.Count());
             }
 
             [Fact]
             public async Task IsClearedWhenTextIsChanged()
             {
-                var oldSuggestions = getTagSuggestions(3, 1);
-                var newSuggestions = getTagSuggestions(1, 1);
+                var workspace = createWorkspace(13, "Some workspace");
+                var oldSuggestions = getTagSuggestions(3, workspace);
+                var newSuggestions = getTagSuggestions(1, workspace);
+                var oldTagIds = oldSuggestions.Select(tag => tag.TagId).ToArray();
                 var autocompleteProvider = Substitute.For<IAutocompleteProvider>();
                 var queryText = "Query text";
                 autocompleteProvider.Query(Arg.Any<string>(), Arg.Is(AutocompleteSuggestionType.Tags))
@@ -219,12 +233,14 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                 autocompleteProvider.Query(Arg.Is(queryText), Arg.Is(AutocompleteSuggestionType.Tags))
                     .Returns(Observable.Return(newSuggestions));
                 DataSource.AutocompleteProvider.Returns(autocompleteProvider);
+                DataSource.Workspaces.GetById(Arg.Is(workspace.Id))
+                    .Returns(Observable.Return(workspace));
+                ViewModel.Prepare((oldTagIds, workspace.Id));
                 await ViewModel.Initialize();
 
                 ViewModel.Text = queryText;
 
                 ViewModel.Tags.Should().HaveCount(1);
-                ViewModel.Tags.First().Should().HaveCount(1);
             }
         }
 
@@ -270,7 +286,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
             public async Task RemovesTheTagIdFromSelectedTagIdsIfSelectedAlready()
             {
                 var selectableTag = new SelectableTagViewModel(tagSuggestion, true);
-                ViewModel.Prepare(new long[] { selectableTag.Id });
+                ViewModel.Prepare((new long[] { selectableTag.Id }, 0));
 
                 ViewModel.SelectTagCommand.Execute(selectableTag);
                 await ViewModel.SaveCommand.ExecuteAsync();
@@ -291,7 +307,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
             {
                 var tagIds = new long[] { 100, 3, 10, 34, 532 };
 
-                ViewModel.Prepare(tagIds);
+                ViewModel.Prepare((tagIds, 0));
                 await ViewModel.SaveCommand.ExecuteAsync();
 
                 await NavigationService

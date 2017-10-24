@@ -8,14 +8,13 @@ using MvvmCross.Core.Navigation;
 using MvvmCross.Core.ViewModels;
 using Toggl.Foundation.Autocomplete.Suggestions;
 using Toggl.Foundation.DataSources;
-using Toggl.Foundation.MvvmCross.Collections;
 using Toggl.Multivac;
 using Toggl.Multivac.Extensions;
 
 namespace Toggl.Foundation.MvvmCross.ViewModels
 {
     [Preserve(AllMembers = true)]
-    public sealed class SelectTagsViewModel : MvxViewModel<long[], long[]>
+    public sealed class SelectTagsViewModel : MvxViewModel<(long[] tagIds, long workspaceId), long[]>
     {
         private readonly IMvxNavigationService navigationService;
         private readonly ITogglDataSource dataSource;
@@ -23,11 +22,12 @@ namespace Toggl.Foundation.MvvmCross.ViewModels
         private readonly HashSet<long> selectedTagIds = new HashSet<long>();
 
         private long[] defaultResult;
+        private long workspaceId;
 
         public string Text { get; set; } = "";
 
-        public MvxObservableCollection<WorkspaceGroupedCollection<SelectableTagViewModel>> Tags { get; }
-            = new MvxObservableCollection<WorkspaceGroupedCollection<SelectableTagViewModel>>();
+        public MvxObservableCollection<SelectableTagViewModel> Tags { get; }
+            = new MvxObservableCollection<SelectableTagViewModel>();
 
         public IMvxAsyncCommand CloseCommand { get; }
 
@@ -48,10 +48,11 @@ namespace Toggl.Foundation.MvvmCross.ViewModels
             SelectTagCommand = new MvxCommand<SelectableTagViewModel>(selectTag);
         }
         
-        public override void Prepare(long[] parameter)
+        public override void Prepare((long[] tagIds, long workspaceId) parameter)
         {
-            defaultResult = parameter;
-            foreach (var tagId in parameter)
+            workspaceId = parameter.workspaceId;
+            defaultResult = parameter.tagIds;
+            foreach (var tagId in parameter.tagIds)
                 selectedTagIds.Add(tagId);
         }
 
@@ -63,6 +64,7 @@ namespace Toggl.Foundation.MvvmCross.ViewModels
                        .StartWith(Text)
                        .SelectMany(text => dataSource.AutocompleteProvider.Query(text, AutocompleteSuggestionType.Tags))
                        .Select(suggestions => suggestions.Cast<TagSuggestion>())
+                       .Select(suggestions => suggestions.Where(s => s.WorkspaceId == workspaceId))
                        .Subscribe(onTags);
         }
 
@@ -75,10 +77,7 @@ namespace Toggl.Foundation.MvvmCross.ViewModels
         {
             Tags.Clear();
 
-            tags.Select(createSelectableTag)
-                .GroupBy(tag => tag.Workspace)
-                .Select(grouping => new WorkspaceGroupedCollection<SelectableTagViewModel>(grouping.Key, grouping))
-                .ForEach(Tags.Add);
+            Tags.AddRange(tags.Select(createSelectableTag));
         }
 
         private SelectableTagViewModel createSelectableTag(TagSuggestion tagSuggestion)

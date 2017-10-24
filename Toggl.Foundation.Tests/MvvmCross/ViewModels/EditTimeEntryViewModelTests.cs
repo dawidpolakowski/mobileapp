@@ -349,10 +349,36 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
 
                 NavigationService
                     .Received()
-                    .Navigate<long[], long[]>(
+                    .Navigate<(long[] tagIds, long workspaceId), long[]>(
                         Arg.Is(typeof(SelectTagsViewModel)),
-                        Arg.Is<long[]>(ids => ids.SequenceEqual(tagIds)))
+                        Arg.Is<(long[] tagIds, long workspaceId)>(
+                            tuple => tuple.tagIds.SequenceEqual(tagIds)))
                     .Wait();
+            }
+
+            [Fact]
+            public async Task NavigatesToTheSelectTagsViewModelPassingWorkspaceId()
+            {
+                long workspaceId = 13;
+                var workspace = Substitute.For<IDatabaseWorkspace>();
+                workspace.Id.Returns(workspaceId);
+                var timeEntry = Substitute.For<IDatabaseTimeEntry>();
+                timeEntry.Id.Returns(14);
+                timeEntry.WorkspaceId.Returns(workspaceId);
+                DataSource.TimeEntries.GetById(Arg.Any<long>())
+                    .Returns(Observable.Return(timeEntry));
+                ViewModel.Prepare(timeEntry.Id);
+                await ViewModel.Initialize();
+
+                await ViewModel.SelectTagsCommand.ExecuteAsync();
+
+                await NavigationService
+                    .Received()
+                    .Navigate<(long[] tagIds, long workspaceId), long[]>(
+                        Arg.Is(typeof(SelectTagsViewModel)),
+                        Arg.Is<(long[] tagIds, long workspaceId)>(
+                            tuple => tuple.workspaceId == workspaceId)
+                    );
             }
 
             [Property]
@@ -367,7 +393,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                 DataSource.Tags.GetAll(Arg.Any<Func<IDatabaseTag, bool>>())
                     .Returns(Observable.Return(tags));
                 NavigationService
-                    .Navigate<long[], long[]>(Arg.Is(typeof(SelectTagsViewModel)), Arg.Any<long[]>())
+                    .Navigate<(long[], long), long[]>(Arg.Is(typeof(SelectTagsViewModel)), Arg.Any<(long[], long)>())
                     .Returns(Task.FromResult(tagIds));
                 ViewModel.Initialize().Wait();
 
@@ -412,7 +438,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                 DataSource.Tags.GetAll(Arg.Any<Func<IDatabaseTag, bool>>())
                     .Returns(Observable.Return(tags));
                 NavigationService
-                    .Navigate<long[], long[]>(Arg.Is(typeof(SelectTagsViewModel)), Arg.Any<long[]>())
+                    .Navigate<(long[], long), long[]>(Arg.Is(typeof(SelectTagsViewModel)), Arg.Any<(long[], long)>())
                     .Returns(Task.FromResult(tagIds));
 
                 ViewModel.SelectTagsCommand.ExecuteAsync().Wait();
