@@ -9,7 +9,7 @@ namespace Toggl.Daneel.Views
     [Register(nameof(FadeView))]
     public class FadeView : UIView
     {
-        private const int fadeWidth = 8;
+        public nfloat FadeWidth { get; set; } = 8;
 
         public bool FadeLeft { get; set; }
 
@@ -29,7 +29,7 @@ namespace Toggl.Daneel.Views
         {
             var gradient = new CAGradientLayer();
             var relativeFadingStart
-                = fadeWidth / Bounds.Width;
+                = FadeWidth / Bounds.Width;
 
             var transparentColor = new UIColor(0, 0).CGColor;
             var opaqueColor = new UIColor(0, 1).CGColor;
