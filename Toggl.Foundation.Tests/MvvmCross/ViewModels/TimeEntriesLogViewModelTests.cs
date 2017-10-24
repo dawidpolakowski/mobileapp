@@ -297,7 +297,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
 
             [Property]
             public void StartATimeEntryWithTheSameValuesOfTheSelectedTimeEntry(string description,
-                long projectId, bool billable)
+                long projectId, long? taskId, bool billable)
             {
                 if (description == null || projectId == 0) return;
 
@@ -307,6 +307,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                 timeEntry.Description.Returns(description);
                 timeEntry.Billable.Returns(billable);
                 timeEntry.Project.Returns(project);
+                timeEntry.TaskId.Returns(taskId);
                 timeEntry.Stop.Returns(DateTimeOffset.Now);
                 var timeEntryViewModel = new TimeEntryViewModel(timeEntry);
 
@@ -315,7 +316,8 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                 DataSource.TimeEntries.Received().Start(Arg.Is<StartTimeEntryDTO>(dto =>
                     dto.Description == description &&
                     dto.Billable == billable &&
-                    dto.ProjectId == projectId
+                    dto.ProjectId == projectId &&
+                    dto.TaskId == taskId
                 )).Wait();
             }
 

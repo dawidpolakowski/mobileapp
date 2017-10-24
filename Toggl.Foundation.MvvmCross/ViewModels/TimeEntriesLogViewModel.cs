@@ -164,6 +164,7 @@ namespace Toggl.Foundation.MvvmCross.ViewModels
                 .Select(user => new StartTimeEntryDTO
                 {
                     UserId = user.Id,
+                    TaskId = timeEntryViewModel.TaskId,
                     WorkspaceId = user.DefaultWorkspaceId,
                     Billable = timeEntryViewModel.Billable,
                     StartTime = timeService.CurrentDateTime, 

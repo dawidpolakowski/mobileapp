@@ -4,7 +4,7 @@
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13174"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -18,35 +18,16 @@
                 <rect key="frame" x="0.0" y="0.0" width="320" height="63.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Doing stuff" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Nae-xw-0DY">
-                        <rect key="frame" x="16" y="14" width="72" height="17"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Project: task client" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NoR-BE-6hu">
+                        <rect key="frame" x="16" y="35" width="120" height="17"/>
                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aEZ-h8-6cJ">
-                        <rect key="frame" x="16" y="41" width="6" height="6"/>
-                        <color key="backgroundColor" red="0.08235294118" green="0.59607843140000005" blue="0.94901960780000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <constraints>
-                            <constraint firstAttribute="height" constant="6" id="tS1-5b-LBW"/>
-                            <constraint firstAttribute="width" constant="6" id="yzT-z1-nJ1"/>
-                        </constraints>
-                        <userDefinedRuntimeAttributes>
-                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                <integer key="value" value="3"/>
-                            </userDefinedRuntimeAttribute>
-                        </userDefinedRuntimeAttributes>
-                    </view>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Meetings" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Oyi-iD-a4P">
-                        <rect key="frame" x="26" y="35" width="60" height="17"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Doing stuff" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Nae-xw-0DY">
+                        <rect key="frame" x="16" y="14" width="72" height="17"/>
                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                        <color key="textColor" red="0.0" green="0.36657631802721086" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                        <nil key="highlightedColor"/>
-                    </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Toggl" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mpu-MG-rMe">
-                        <rect key="frame" x="90" y="35" width="36" height="17"/>
-                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                        <color key="textColor" red="0.63921568627450975" green="0.63921568627450975" blue="0.63921568627450975" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QW4-3n-QYi">
@@ -71,12 +52,8 @@
                     </view>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="aEZ-h8-6cJ" firstAttribute="top" secondItem="Nae-xw-0DY" secondAttribute="bottom" constant="10" id="MgW-ZU-i82"/>
-                    <constraint firstItem="mpu-MG-rMe" firstAttribute="centerY" secondItem="Oyi-iD-a4P" secondAttribute="centerY" id="Zhl-MZ-yXR"/>
-                    <constraint firstItem="aEZ-h8-6cJ" firstAttribute="leading" secondItem="Nae-xw-0DY" secondAttribute="leading" id="bbr-IX-fJf"/>
-                    <constraint firstItem="Oyi-iD-a4P" firstAttribute="leading" secondItem="aEZ-h8-6cJ" secondAttribute="trailing" constant="4" id="opJ-C6-JVK"/>
-                    <constraint firstItem="mpu-MG-rMe" firstAttribute="leading" secondItem="Oyi-iD-a4P" secondAttribute="trailing" constant="4" id="uGf-lo-oF9"/>
-                    <constraint firstItem="Oyi-iD-a4P" firstAttribute="centerY" secondItem="aEZ-h8-6cJ" secondAttribute="centerY" id="zZf-KX-95p"/>
+                    <constraint firstItem="NoR-BE-6hu" firstAttribute="leading" secondItem="Nae-xw-0DY" secondAttribute="leading" id="DMw-RE-xam"/>
+                    <constraint firstItem="NoR-BE-6hu" firstAttribute="top" secondItem="Nae-xw-0DY" secondAttribute="bottom" constant="4" id="xuV-FC-Yvg"/>
                 </constraints>
             </tableViewCellContentView>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -97,10 +74,8 @@
                 <outlet property="DescriptionLabel" destination="Nae-xw-0DY" id="name-outlet-Nae-xw-0DY"/>
                 <outlet property="DescriptionTopDistanceConstraint" destination="AOe-o4-TGF" id="name-outlet-AOe-o4-TGF"/>
                 <outlet property="FadeView" destination="QW4-3n-QYi" id="name-outlet-QW4-3n-QYi"/>
-                <outlet property="ProjectDotView" destination="aEZ-h8-6cJ" id="name-outlet-aEZ-h8-6cJ"/>
-                <outlet property="ProjectLabel" destination="Oyi-iD-a4P" id="name-outlet-Oyi-iD-a4P"/>
+                <outlet property="ProjectTaskClientLabel" destination="NoR-BE-6hu" id="mh6-l7-lfe"/>
                 <outlet property="StartButton" destination="0rR-jN-UwS" id="name-outlet-0rR-jN-UwS"/>
-                <outlet property="TaskLabel" destination="mpu-MG-rMe" id="name-outlet-mpu-MG-rMe"/>
             </connections>
         </tableViewCell>
     </objects>

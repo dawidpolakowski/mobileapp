@@ -56,7 +56,7 @@ namespace Toggl.Foundation.DataSources
                     .Select(tes => tes.SingleOrDefault())
                     .StartWith()
                     .Merge(TimeEntryCreated.Where(te => te.Stop == null))
-                    .Merge(TimeEntryUpdated.Where(tuple => tuple.Id == currentlyRunningTimeEntryId).Select(tuple => tuple.Entity))
+                    .Merge(TimeEntryUpdated.Where(tuple => tuple.Entity.Id == currentlyRunningTimeEntryId).Select(tuple => tuple.Entity))
                     .Select(runningTimeEntry)
                     .Do(setRunningTimeEntryId);
 
