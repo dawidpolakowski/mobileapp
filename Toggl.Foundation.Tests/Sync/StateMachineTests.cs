@@ -316,6 +316,16 @@ namespace Toggl.Foundation.Tests.Sync
 
                 transition3Performed.Should().BeFalse();
             }
+
+            [Fact]
+            public void ThrowsAnExceptionWhenTheStateMachineIsStartedAfterBeingFrozen()
+            {
+                StateMachine.Freeze();
+
+                Action starting = () => StateMachine.Start(Substitute.For<ITransition>());
+
+                starting.ShouldThrow<InvalidOperationException>();
+            }
         }
     }
 
